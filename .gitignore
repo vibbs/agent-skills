@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+dist/
+shots/
+__pycache__/
+skills-lock.json

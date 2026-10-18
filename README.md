@@ -1,0 +1,128 @@
+# agent-skills
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![validate](https://github.com/vibbs/agent-skills/actions/workflows/validate.yml/badge.svg)](https://github.com/vibbs/agent-skills/actions/workflows/validate.yml)
+
+A collection of reusable skills for AI coding agents. Each skill is a folder with a
+`SKILL.md` and any supporting references, assets or scripts, written to the open
+[Agent Skills specification](https://agentskills.io/specification) so it works in any
+agent that supports the format, not just one. It is for developers who want to drop
+well-tested, general-purpose workflows into Claude Code, Codex, Cursor, Copilot and
+similar tools. This repository holds skills only; installation uses existing tools.
+
+## Install
+
+### Any agent: `skills` CLI
+
+The [`skills` CLI](https://github.com/vercel-labs/skills) installs skills into the
+agent directories it detects (Claude Code, Codex, Cursor, GitHub Copilot, Gemini CLI,
+OpenCode, Windsurf and others).
+
+```bash
+npx skills add vibbs/agent-skills
+```
+
+Install a single skill:
+
+```bash
+npx skills add vibbs/agent-skills --skill architecture-explainer
+```
+
+Useful flags: `--list` shows the available skills without installing, `-a <agent>`
+targets specific agents (for example `-a claude-code codex`), `-g` installs for your user
+instead of the current project, and `-y` skips prompts.
+
+### Claude Code: plugin marketplace
+
+In Claude Code:
+
+```
+/plugin marketplace add vibbs/agent-skills
+/plugin install vibbs-agent-skills@vibbs-agent-skills
+```
+
+Or from a shell:
+
+```bash
+claude plugin marketplace add vibbs/agent-skills
+```
+
+```bash
+claude plugin install vibbs-agent-skills@vibbs-agent-skills
+```
+
+The plugin installs every skill in this repository. Plugin skills are namespaced, so
+skills appear as `vibbs-agent-skills:<skill-name>`.
+
+### Manual
+
+Copy a folder from `skills/` into your agent's skills directory (for example
+`.claude/skills/` or `.agents/skills/`). Per-agent manual instructions are untested.
+
+## Skills
+
+<!-- catalog:begin -->
+| Skill | Description | When it triggers |
+|---|---|---|
+| [`architecture-explainer`](skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
+<!-- catalog:end -->
+
+## Compatibility
+
+Tested so far:
+
+- Installation with `npx skills add` from a local checkout, into a temporary project
+  directory, for the `claude-code` and `codex` targets.
+- The Claude Code plugin and marketplace manifests pass `claude plugin validate`, and
+  `claude plugin marketplace add` / `claude plugin install` succeed from a local checkout
+  (Claude Code 2.1.302).
+
+Skill behaviour has not yet been tested end to end in any specific agent. This list is
+updated as testing happens.
+
+## Bundled scripts
+
+Some skills ship scripts (for example, a build linter or a screenshot checker). Nothing
+runs automatically on install; scripts run only when an agent or you invoke them, and
+the agent normally asks before running commands. Each skill's `README.md` lists its
+scripts and what they need. Read them before running them.
+
+## Creating a new skill
+
+1. Create `skills/<skill-name>/SKILL.md`. The folder name must equal the `name` field.
+
+   ```
+   skills/<skill-name>/
+   ├── SKILL.md        required: frontmatter (name, description) + instructions
+   ├── README.md       short human-facing summary and example
+   ├── references/     optional: docs the agent reads on demand
+   ├── scripts/        optional: executable code
+   └── assets/         optional: templates, data, static files
+   ```
+
+   Write the `description` as what the skill does followed by a "Use when ..." sentence.
+   The catalog below is generated from it.
+
+2. Validate it (requires [uv](https://docs.astral.sh/uv/)):
+
+   ```bash
+   scripts/validate.sh
+   ```
+
+3. Regenerate the skills table:
+
+   ```bash
+   scripts/update-catalog.py
+   ```
+
+4. Open a pull request. CI runs the validator, checks the table is current, and
+   validates the Claude Code manifests.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Skills must be general-purpose, follow the spec,
+and pass validation; one skill per pull request.
+
+## License
+
+[MIT](LICENSE) © Vaibhav Doddihal

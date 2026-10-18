@@ -1,0 +1,30 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate skills against the Agent Skills spec
+        run: bash scripts/validate.sh
+
+      - name: Check README catalog is up to date
+        run: python3 scripts/update-catalog.py --check
+
+      - name: Validate Claude Code plugin and marketplace manifests
+        run: npx --yes @anthropic-ai/claude-code plugin validate .

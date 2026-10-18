@@ -1,0 +1,15 @@
+{
+  "name": "vibbs-agent-skills",
+  "description": "Reusable agent skills following the open Agent Skills specification.",
+  "owner": {
+    "name": "Vaibhav Doddihal",
+    "url": "https://github.com/vibbs"
+  },
+  "plugins": [
+    {
+      "name": "vibbs-agent-skills",
+      "source": "./",
+      "description": "Reusable agent skills following the open Agent Skills specification."
+    }
+  ]
+}

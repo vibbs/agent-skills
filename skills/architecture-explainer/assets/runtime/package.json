@@ -1,0 +1,27 @@
+{
+  "name": "architecture-explainer",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "build": "npm run lint && vite build",
+    "dev": "vite",
+    "shots": "node scripts/shots.mjs",
+    "fonts": "node scripts/fonts.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@preact/preset-vite": "^2.10.6",
+    "playwright": "^1.56.0",
+    "preact": "^10.29.7",
+    "vite": "^5.4.21",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "type": "module"
+}

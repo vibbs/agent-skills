@@ -52,6 +52,12 @@ Known issue: on npm 11.5, `npm install` can fail with
 `@preact/preset-vite`'s peer dependencies. `npm install --legacy-peer-deps` works around
 it; npm 12 is not affected.
 
+In the Claude web and desktop apps (skill uploaded as a ZIP), the build runs in Claude's
+code execution sandbox. This is untested: `npm install` needs access to the npm registry,
+and the screenshot step needs Playwright to download Chromium, which the sandbox's
+network settings may block. If only the screenshot step fails, the built
+`dist/index.html` is still usable but has not been visually checked.
+
 ## Bundled scripts
 
 All live in `assets/runtime/scripts/` and run only when the agent or you invoke them.

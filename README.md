@@ -54,6 +54,25 @@ claude plugin install vibbs-agent-skills@vibbs-agent-skills
 The plugin installs every skill in this repository. Plugin skills are namespaced, so
 skills appear as `vibbs-agent-skills:<skill-name>`.
 
+### Claude apps (web and desktop): upload a ZIP
+
+Untested. In claude.ai and the Claude desktop app (outside the Code tab, which uses the
+plugin instructions above), custom skills are installed by uploading a ZIP. Package the
+skill folder itself, so the ZIP's root is the folder, not the repository:
+
+```bash
+cd skills && zip -r ../architecture-explainer.zip architecture-explainer
+```
+
+Then, in Claude, open Customize > Skills (Settings > Capabilities in some versions), click
+"+", choose "Create skill", then "Upload a skill", and select the ZIP. Skills require code
+execution to be enabled; on Free, Pro and Max plans that is under Settings > Capabilities.
+Uploaded skills are private to your account. See
+[Use Skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude).
+
+Skills uploaded this way run in Claude's code execution sandbox, not on your machine, so
+anything a skill installs or downloads depends on that sandbox's network access.
+
 ### Manual
 
 Copy a folder from `skills/` into your agent's skills directory (for example

@@ -3,6 +3,13 @@
 All notable changes to this repository are recorded here. Versions apply to the
 repository as a whole and to the Claude Code plugin version in `.claude-plugin/plugin.json`.
 
+## Unreleased
+
+### Added
+
+- README: install instructions for the Claude web and desktop apps (ZIP upload, untested).
+- `architecture-explainer` README: note on running in Claude's code execution sandbox.
+
 ## 0.1.0 - 2026-10-18
 
 ### Added

@@ -1,0 +1,20 @@
+name: release-please
+
+# Opens or updates a release PR from the conventional-commit titles of merged PRs.
+# Merging that PR bumps version.txt, CHANGELOG.md and the plugin version in
+# .claude-plugin/marketplace.json, then tags vX.Y.Z and creates a GitHub Release.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v5

@@ -10,7 +10,7 @@
 - [ ] No organisation-specific content (company names, internal systems, private paths)
 - [ ] Agent-specific instructions are isolated in a clearly marked section
 - [ ] Any bundled scripts are documented in the skill's README
-- [ ] CHANGELOG.md updated
+- [ ] PR title follows Conventional Commits (`feat:`, `fix:`, `docs:`, ...); CHANGELOG.md is generated, not edited
 
 ## Tested in
 

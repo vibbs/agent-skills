@@ -59,8 +59,11 @@ Adding the marketplace clones the whole repository, including the preview media 
 `docs/`. To check out only what the plugin needs, add it with a sparse checkout:
 
 ```bash
-claude plugin marketplace add vibbs/agent-skills --sparse .claude-plugin skills
+claude plugin marketplace add vibbs/agent-skills --sparse /.claude-plugin /skills
 ```
+
+Keep the leading slashes. Without them, `skills` also matches `docs/skills/`, and the
+preview media gets checked out anyway.
 
 ### Claude apps (web and desktop): upload a ZIP
 

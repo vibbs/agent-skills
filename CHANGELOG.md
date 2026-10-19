@@ -19,7 +19,8 @@ repository as a whole and to the Claude Code plugin version in `.claude-plugin/m
 - The Claude Code plugin's source is now `./skills`, so only skill folders are copied into
   the plugin cache. Plugin metadata moved from `.claude-plugin/plugin.json` (removed) into
   the marketplace entry.
-- README documents `--sparse` for adding the marketplace without the docs media.
+- README documents `--sparse /.claude-plugin /skills` for adding the marketplace without
+  the docs media (the leading slashes are required).
 
 ## 0.1.0 - 2026-10-18
 

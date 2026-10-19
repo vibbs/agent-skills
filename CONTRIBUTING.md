@@ -22,8 +22,13 @@ Contributions are welcome: new skills, fixes to existing ones, and tooling impro
 
 ## Docs and preview media
 
-Every skill has an overview page at `docs/skills/<name>/README.md`. Preview media is
-optional and lives next to it, never inside the skill:
+Every skill has an overview page at `docs/skills/<name>/README.md`. It must open with a
+`## The problem` section: the problem a reader has before using the skill, in plain
+terms, before any description of features. Its first paragraph is quoted in
+`docs/catalog.md`, so make that paragraph stand on its own. Follow it with how the skill
+solves the problem, when to use it, and how to install it.
+
+Preview media is optional and lives next to the overview page, never inside the skill:
 
 - `docs/skills/<name>/media/preview.png`: a small static frame (about 640px wide) for
   the README table.

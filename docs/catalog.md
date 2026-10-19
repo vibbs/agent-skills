@@ -11,6 +11,8 @@ its `docs/skills/<name>/` page, not the block below.
 
 Build an interactive, self-contained HTML architecture explainer.
 
+**The problem:** A system diagram is usually drawn once, for one reader, and then expected to serve everyone. An executive needs a handful of boxes and what they cost. An engineer needs the thirty components behind them. A reviewer needs to see where customer data crosses a boundary. Draw for the executive and the engineer learns nothing; draw for the engineer and the executive sees a wall of boxes. So teams draw several diagrams, and those drift apart as the system changes.
+
 **When it triggers:** Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore.
 
 <img src="skills/architecture-explainer/media/tour.gif" width="960" alt="architecture-explainer: animated preview">

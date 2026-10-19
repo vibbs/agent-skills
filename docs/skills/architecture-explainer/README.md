@@ -1,7 +1,24 @@
 # architecture-explainer
 
-Turns a description of a system into one self-contained, interactive HTML explainer. You
-author the topology once, and readers move through it four ways:
+Turns a description of a system into one self-contained, interactive HTML explainer.
+
+## The problem
+
+A system diagram is usually drawn once, for one reader, and then expected to serve
+everyone. An executive needs a handful of boxes and what they cost. An engineer needs
+the thirty components behind them. A reviewer needs to see where customer data crosses
+a boundary. Draw for the executive and the engineer learns nothing; draw for the
+engineer and the executive sees a wall of boxes. So teams draw several diagrams, and
+those drift apart as the system changes.
+
+The second problem is narration. A diagram that made sense in the meeting, with its
+author pointing at it, is opaque to someone reading it later. Mermaid, drawio and static
+SVG show what is connected, but not why it is built that way or where to look first.
+
+## How it solves it
+
+You author the system once, as one topology. Everything a reader sees is a view over
+that single graph, never a second diagram, so the views cannot drift apart:
 
 - **Personas:** executive, architect and engineer views of the same system, with
   different vocabulary and depth.
@@ -9,9 +26,11 @@ author the topology once, and readers move through it four ways:
   its own edges and colour.
 - **Eras:** how the system looked before, today, and as planned.
 - **A narrated tour:** the prose drives the camera and switches lens and era as it goes.
+  It carries the argument for readers who weren't in the room, and the build refuses to
+  produce an explainer without one.
 
-The output is a single `.html` file with no network calls. You can host it anywhere,
-embed it in an `<iframe>`, or open it offline.
+The output is a single `.html` file with no network calls, so it keeps working when it is
+hosted anywhere, embedded in an `<iframe>`, emailed, or opened offline.
 
 <img src="media/tour.gif" width="960" alt="Read mode: scrolling the narrative switches persona, lens and era, and the diagram re-frames and recolours to match">
 

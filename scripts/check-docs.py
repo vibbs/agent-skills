@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check that skill docs and preview media follow the repository conventions.
 
-  - every skill in skills/ has docs/skills/<name>/README.md
+  - every skill in skills/ has docs/skills/<name>/README.md with a
+    "## The problem" section
   - every docs/skills/<name>/ belongs to a skill that exists
   - every relative link or image in docs/ points at a file that exists
   - each preview media file is at most 2 MB
@@ -29,8 +30,11 @@ def main() -> int:
     for name in sorted(documented - skills):
         errors.append(f"docs/skills/{name}: no matching skill in skills/")
     for name in sorted(skills & documented):
-        if not (ROOT / "docs" / "skills" / name / "README.md").is_file():
+        page = ROOT / "docs" / "skills" / name / "README.md"
+        if not page.is_file():
             errors.append(f"docs/skills/{name}: missing README.md")
+        elif not re.search(r"^## The problem\s*\n\s*\S", page.read_text(), re.M):
+            errors.append(f"docs/skills/{name}/README.md: missing a '## The problem' section")
 
     for md in sorted((ROOT / "docs").rglob("*.md")):
         for target in LINK.findall(md.read_text()):

@@ -146,7 +146,7 @@ scripts and what they need. Read them before running them.
 
    ```
    docs/skills/<skill-name>/
-   ├── README.md       overview: what it does, when to use it, install
+   ├── README.md       overview: the problem, how it solves it, when to use it, install
    └── media/          optional, each file 2 MB or less
        ├── preview.png thumbnail shown in the skills table
        └── tour.gif    full preview shown in the catalog

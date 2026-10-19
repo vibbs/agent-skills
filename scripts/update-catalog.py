@@ -5,6 +5,9 @@ Writes two generated blocks:
   README.md         the skills table, with a preview thumbnail per skill
   docs/catalog.md   one section per skill, with the full preview GIF
 
+The catalog also quotes the first paragraph of each overview page's
+"## The problem" section, so the problem statement has one source.
+
 Preview media is found by convention, never declared in a skill:
   docs/skills/<name>/media/preview.png   thumbnail for the README table
   docs/skills/<name>/media/tour.gif      full preview for the catalog
@@ -66,6 +69,15 @@ def cell(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", " ")
 
 
+def problem_statement(name: str) -> str:
+    """First paragraph of the '## The problem' section of the skill's overview page."""
+    page = ROOT / "docs" / "skills" / name / "README.md"
+    if not page.is_file():
+        return ""
+    m = re.search(r"^## The problem\s*\n(.*?)(?:\n\s*\n|\Z)", page.read_text(), re.M | re.S)
+    return " ".join(m.group(1).split()) if m else ""
+
+
 def skills() -> list[dict]:
     out = []
     for skill_md in sorted(ROOT.glob("skills/*/SKILL.md")):
@@ -76,6 +88,7 @@ def skills() -> list[dict]:
         out.append({
             "name": name,
             "summary": summary,
+            "problem": problem_statement(name),
             "when": when,
             "thumb": (media / "preview.png").is_file(),
             "gif": (media / "tour.gif").is_file(),
@@ -101,6 +114,8 @@ def catalog_sections(items: list[dict]) -> str:
     for s in items:
         n = s["name"]
         lines = [f"## {n}", "", f"{s['summary']}.", ""]
+        if s["problem"]:
+            lines += [f"**The problem:** {s['problem']}", ""]
         if s["when"]:
             lines += [f"**When it triggers:** {s['when']}", ""]
         if s["gif"]:

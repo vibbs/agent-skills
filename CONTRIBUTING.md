@@ -54,15 +54,55 @@ scripts/update-catalog.py
 scripts/check-docs.py
 ```
 
-Commit the regenerated README table and `docs/catalog.md` with your change, add an entry
-to `CHANGELOG.md`, and fill in the pull request template. CI runs the same checks plus
-`claude plugin validate .`.
+Commit the regenerated README table and `docs/catalog.md` with your change and fill in
+the pull request template. Don't edit `CHANGELOG.md`; it is generated at release time.
+CI runs the same checks plus `claude plugin validate .`.
+
+## Pull request titles
+
+`main` only accepts squash merges, so a PR's title becomes its commit on `main`, and
+release-please builds the changelog and the next version from those titles. Titles must
+follow [Conventional Commits](https://www.conventionalcommits.org/); the `pr-title`
+check enforces it.
+
+| Prefix | Use for | Version bump | Changelog section |
+|---|---|---|---|
+| `feat:` | a new skill, or a new capability in one | minor | Added |
+| `fix:` | a bug fix in a skill or tooling | patch | Fixed |
+| `refactor:` / `perf:` | behaviour-preserving changes users might notice | patch | Changed |
+| `docs:` | READMEs, catalog, overview pages, media | patch | Documentation |
+| `ci:` / `build:` / `test:` / `chore:` | repository plumbing | none | hidden |
+
+Mark a breaking change with `!` (for example `feat!: rename skill X to Y`). Breaking
+means a skill is removed or renamed, or the plugin name changes. Before 1.0.0 a breaking
+change bumps the minor version.
+
+To produce several changelog entries from one PR, put them in the PR body:
+
+```
+BEGIN_COMMIT_OVERRIDE
+feat: first entry
+docs: second entry
+END_COMMIT_OVERRIDE
+```
 
 ## Releases
 
-When cutting a release, bump `version` in the plugin entry of
-`.claude-plugin/marketplace.json` and add a `CHANGELOG.md` heading for it. Claude Code
-uses that version to decide whether installed copies need updating.
+The whole repository shares one version (`version.txt`), and the Claude Code plugin
+carries the same number. Releases are cut by
+[release-please](https://github.com/googleapis/release-please):
+
+1. Every merge to `main` updates an open release PR titled `chore(main): release X.Y.Z`.
+   It bumps `version.txt`, `CHANGELOG.md` and the plugin `version` in
+   `.claude-plugin/marketplace.json`.
+2. GitHub doesn't run workflows on PRs opened by Actions, so the release PR starts
+   without the required `validate` check. Close and reopen it once to trigger CI.
+3. Merge the release PR. release-please tags `vX.Y.Z` and publishes a GitHub Release.
+
+Claude Code compares the plugin `version` to decide whether installed copies need
+updating, so merged changes reach plugin users only when a release is merged. The
+`skills` CLI tracks content hashes, so `npx skills update` picks up changes on `main`
+without waiting for a release.
 
 The plugin's source is `./skills`, so only skill folders are copied into users' plugin
 caches. Keep it that way: anything a skill needs must live inside its own folder.

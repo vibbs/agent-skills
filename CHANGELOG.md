@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this repository are recorded here. Versions apply to the
-repository as a whole and to the Claude Code plugin version in `.claude-plugin/plugin.json`.
+repository as a whole and to the Claude Code plugin version in `.claude-plugin/marketplace.json`.
 
 ## Unreleased
 
@@ -9,6 +9,17 @@ repository as a whole and to the Claude Code plugin version in `.claude-plugin/p
 
 - README: install instructions for the Claude web and desktop apps (ZIP upload, untested).
 - `architecture-explainer` README: note on running in Claude's code execution sandbox.
+- `docs/catalog.md` and `docs/skills/<name>/` overview pages, with a recorded tour GIF
+  and thumbnail for `architecture-explainer`. The README skills table gains a Preview column.
+- `scripts/check-docs.py`, run in CI: every skill has an overview page, docs links resolve,
+  media is 2 MB or less, and nothing under `skills/` references `docs/`.
+
+### Changed
+
+- The Claude Code plugin's source is now `./skills`, so only skill folders are copied into
+  the plugin cache. Plugin metadata moved from `.claude-plugin/plugin.json` (removed) into
+  the marketplace entry.
+- README documents `--sparse` for adding the marketplace without the docs media.
 
 ## 0.1.0 - 2026-10-18
 

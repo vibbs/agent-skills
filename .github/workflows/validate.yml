@@ -23,8 +23,11 @@ jobs:
       - name: Validate skills against the Agent Skills spec
         run: bash scripts/validate.sh
 
-      - name: Check README catalog is up to date
+      - name: Check README and docs catalog are up to date
         run: python3 scripts/update-catalog.py --check
+
+      - name: Check skill docs and preview media
+        run: python3 scripts/check-docs.py
 
       - name: Validate Claude Code plugin and marketplace manifests
         run: npx --yes @anthropic-ai/claude-code plugin validate .

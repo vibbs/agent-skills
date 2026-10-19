@@ -52,7 +52,15 @@ claude plugin install vibbs-agent-skills@vibbs-agent-skills
 ```
 
 The plugin installs every skill in this repository. Plugin skills are namespaced, so
-skills appear as `vibbs-agent-skills:<skill-name>`.
+skills appear as `vibbs-agent-skills:<skill-name>`. Only `skills/` is copied into the
+plugin cache.
+
+Adding the marketplace clones the whole repository, including the preview media under
+`docs/`. To check out only what the plugin needs, add it with a sparse checkout:
+
+```bash
+claude plugin marketplace add vibbs/agent-skills --sparse .claude-plugin skills
+```
 
 ### Claude apps (web and desktop): upload a ZIP
 
@@ -80,10 +88,12 @@ Copy a folder from `skills/` into your agent's skills directory (for example
 
 ## Skills
 
+Previews and longer write-ups are in the [catalog](docs/catalog.md).
+
 <!-- catalog:begin -->
-| Skill | Description | When it triggers |
-|---|---|---|
-| [`architecture-explainer`](skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
+| Preview | Skill | Description | When it triggers |
+|---|---|---|---|
+| <a href="docs/skills/architecture-explainer/"><img src="docs/skills/architecture-explainer/media/preview.png" width="240" alt="architecture-explainer preview"></a> | [`architecture-explainer`](docs/skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
 <!-- catalog:end -->
 
 ## Compatibility
@@ -128,14 +138,29 @@ scripts and what they need. Read them before running them.
    scripts/validate.sh
    ```
 
-3. Regenerate the skills table:
+3. Add its overview page and, optionally, preview media. These live outside the skill
+   so installs stay lean:
+
+   ```
+   docs/skills/<skill-name>/
+   ├── README.md       overview: what it does, when to use it, install
+   └── media/          optional, each file 2 MB or less
+       ├── preview.png thumbnail shown in the skills table
+       └── tour.gif    full preview shown in the catalog
+   ```
+
+4. Regenerate the skills table and catalog, then check the docs:
 
    ```bash
    scripts/update-catalog.py
    ```
 
-4. Open a pull request. CI runs the validator, checks the table is current, and
-   validates the Claude Code manifests.
+   ```bash
+   scripts/check-docs.py
+   ```
+
+5. Open a pull request. CI runs the validator, checks the table and catalog are current,
+   checks the docs and media, and validates the Claude Code manifests.
 
 ## Contributing
 

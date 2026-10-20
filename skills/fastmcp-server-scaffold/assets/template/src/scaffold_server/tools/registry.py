@@ -23,8 +23,10 @@ from .. import feature_flags
 from ..logger import create_logger
 from . import example
 from .errors import unwrap
+
 # scaffold:if with=output-schema
 from .models import ItemDetail, ItemList, RenameResult
+
 # scaffold:end
 from .writes import READ, WRITE, WRITE_META
 # scaffold:if !with=output-schema
@@ -72,9 +74,11 @@ def register_tools(mcp: FastMCP) -> None:
         """
         return cast(ItemList, unwrap(await example.list_items(status, limit)))
 
-    mcp.tool(title="List items", annotations=READ,
-             description=describe(example_list_items, *rename_hint, UNTRUSTED_TEXT_RULE),
-             )(example_list_items)
+    mcp.tool(
+        title="List items",
+        annotations=READ,
+        description=describe(example_list_items, *rename_hint, UNTRUSTED_TEXT_RULE),
+    )(example_list_items)
 
     async def example_get_item(item_id: str) -> ItemDetail:
         """Get one item's full detail, including its description.
@@ -84,14 +88,17 @@ def register_tools(mcp: FastMCP) -> None:
         """
         return cast(ItemDetail, unwrap(await example.get_item(item_id)))
 
-    mcp.tool(title="Get item", annotations=READ,
-             description=describe(example_get_item, *rename_hint, UNTRUSTED_TEXT_RULE),
-             )(example_get_item)
+    mcp.tool(
+        title="Get item",
+        annotations=READ,
+        description=describe(example_get_item, *rename_hint, UNTRUSTED_TEXT_RULE),
+    )(example_get_item)
 
     if writes:
 
-        async def example_update_item(item_id: str, title: str, comment: str = "",
-                                      user_confirmed: bool = False) -> RenameResult:
+        async def example_update_item(
+            item_id: str, title: str, comment: str = "", user_confirmed: bool = False
+        ) -> RenameResult:
             """Rename one item. Changes the title only; never discuss or change status,
             owner or anything else.
 
@@ -108,5 +115,9 @@ def register_tools(mcp: FastMCP) -> None:
             result = await example.update_item_title(item_id, title, comment, user_confirmed)
             return cast(RenameResult, unwrap(result))
 
-        mcp.tool(title="Rename item", annotations=WRITE, meta=WRITE_META,
-                 description=describe(example_update_item))(example_update_item)
+        mcp.tool(
+            title="Rename item",
+            annotations=WRITE,
+            meta=WRITE_META,
+            description=describe(example_update_item),
+        )(example_update_item)

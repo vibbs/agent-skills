@@ -19,7 +19,9 @@ _SAFETY_MARGIN_S = 60
 _FALLBACK_LIFETIME_S = 300
 
 
-def save_tokens(cfg: AppConfig, payload: dict[str, Any], previous: dict[str, Any] | None = None) -> dict[str, Any]:
+def save_tokens(
+    cfg: AppConfig, payload: dict[str, Any], previous: dict[str, Any] | None = None
+) -> dict[str, Any]:
     lifetime = payload.get("expires_in")
     try:
         lifetime_s = int(lifetime) if lifetime is not None else _FALLBACK_LIFETIME_S
@@ -48,7 +50,10 @@ def token_request(cfg: AppConfig, form: dict[str, str]) -> dict[str, Any]:
     """Keyword arguments for a token-endpoint POST. Confidential clients use HTTP Basic;
     public clients send client_id in the form body (and rely on PKCE)."""
     if cfg.oauth_client_secret:
-        return {"data": form, "auth": httpx.BasicAuth(cfg.oauth_client_id or "", cfg.oauth_client_secret)}
+        return {
+            "data": form,
+            "auth": httpx.BasicAuth(cfg.oauth_client_id or "", cfg.oauth_client_secret),
+        }
     return {"data": {**form, "client_id": cfg.oauth_client_id or ""}}
 
 
@@ -60,7 +65,9 @@ async def get_access_token(cfg: AppConfig) -> str:
         raise RuntimeError(
             "Not signed in to the upstream. Run: uv run python scripts/oauth_login.py"
         )
-    request = token_request(cfg, {"grant_type": "refresh_token", "refresh_token": data["refresh_token"]})
+    request = token_request(
+        cfg, {"grant_type": "refresh_token", "refresh_token": data["refresh_token"]}
+    )
     assert cfg.oauth_token_url  # load_config() guarantees it in this mode
     async with httpx.AsyncClient(timeout=30.0) as http:
         resp = await http.post(cfg.oauth_token_url, **request)

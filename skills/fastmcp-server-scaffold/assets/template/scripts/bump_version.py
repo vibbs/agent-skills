@@ -22,7 +22,9 @@ SECTIONS = {"feat": "Added", "fix": "Fixed"}
 
 
 def git(*args: str) -> str:
-    return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
+    return subprocess.run(
+        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
 
 
 def next_version(current: str, bump: str) -> str:
@@ -48,7 +50,9 @@ def changelog_entry(version: str, subjects: list[str]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--bump", choices=["patch", "minor", "major"], default="patch")
     parser.add_argument("--no-push", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
@@ -57,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     text = PYPROJECT.read_text()
     m = re.search(r'^version = "(\d+\.\d+\.\d+)"$', text, re.M)
     if not m:
-        print("No version = \"X.Y.Z\" line in pyproject.toml", file=sys.stderr)
+        print('No version = "X.Y.Z" line in pyproject.toml', file=sys.stderr)
         return 1
     version = next_version(m.group(1), args.bump)
     try:
@@ -73,7 +77,9 @@ def main(argv: list[str] | None = None) -> int:
     PYPROJECT.write_text(text.replace(m.group(0), f'version = "{version}"', 1))
     changelog = CHANGELOG.read_text()
     head, sep, rest = changelog.partition("\n## ")
-    CHANGELOG.write_text(f"{head}\n{entry}\n{sep.lstrip(chr(10))}{rest}" if sep else f"{changelog}\n{entry}")
+    CHANGELOG.write_text(
+        f"{head}\n{entry}\n{sep.lstrip(chr(10))}{rest}" if sep else f"{changelog}\n{entry}"
+    )
     git("add", str(PYPROJECT), str(CHANGELOG))
     git("commit", "-m", f"chore: release {version}")
     git("tag", f"v{version}")

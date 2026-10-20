@@ -50,7 +50,9 @@ class ExampleClient:
     async def update_item_title(self, item_id: str, title: str, comment: str) -> dict[str, Any]:
         try:
             async with await authed_client(self.cfg) as http:
-                resp = await http.patch(f"/items/{item_id}", json={"title": title, "comment": comment})
+                resp = await http.patch(
+                    f"/items/{item_id}", json={"title": title, "comment": comment}
+                )
         except httpx.HTTPError as exc:
             return transport_error(exc)
         if resp.status_code not in (200, 204):

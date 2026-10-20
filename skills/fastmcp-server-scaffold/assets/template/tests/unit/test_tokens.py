@@ -39,7 +39,8 @@ async def test_expired_token_refreshes_and_keeps_refresh_token(monkeypatch, tmp_
     data["expires_at"] = 0
     cfg.token_file.write_text(json.dumps(data))
     route = respx.post("https://idp.example.test/token").mock(
-        return_value=httpx.Response(200, json={"access_token": "new", "expires_in": 3600}))
+        return_value=httpx.Response(200, json={"access_token": "new", "expires_in": 3600})
+    )
     assert await tokens.get_access_token(cfg) == "new"
     form = route.calls.last.request.read().decode()
     assert "grant_type=refresh_token" in form and "client_id=client-123" in form

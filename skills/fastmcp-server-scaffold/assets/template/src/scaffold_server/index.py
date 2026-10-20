@@ -26,11 +26,16 @@ def main() -> None:
         # process that uses it. Fingerprints only, never credential values.
         log.info(
             "starting http (auth_mode=%s, public_url=%s, client_id=%s, allowed_hosts=%s)",
-            cfg.auth_mode, cfg.public_url, cfg.client_id_fingerprint(), cfg.allowed_hosts,
+            cfg.auth_mode,
+            cfg.public_url,
+            cfg.client_id_fingerprint(),
+            cfg.allowed_hosts,
         )
         create_http_app(cfg).run(
             transport="http",
-            host=os.environ.get("SCAFFOLD_HTTP_HOST", "0.0.0.0"),  # container default; use 127.0.0.1 on a laptop
+            host=os.environ.get(
+                "SCAFFOLD_HTTP_HOST", "0.0.0.0"
+            ),  # container default; use 127.0.0.1 on a laptop
             port=int(os.environ.get("PORT", "8080")),
             middleware=[Middleware(UnhandledErrorMiddleware)],
             allowed_hosts=cfg.allowed_hosts or None,

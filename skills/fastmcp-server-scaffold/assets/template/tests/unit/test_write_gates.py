@@ -23,7 +23,9 @@ async def test_write_tools_are_exactly_the_destructive_ones(monkeypatch):
     assert read_only == {t.name for t in tools} - WRITE_TOOLS
     for tool in tools:
         meta = tool.meta or {}
-        assert meta.get("anthropic/requiresUserInteraction") is (True if tool.name in WRITE_TOOLS else None)
+        assert meta.get("anthropic/requiresUserInteraction") is (
+            True if tool.name in WRITE_TOOLS else None
+        )
 
 
 def test_claude_settings_ask_for_every_write_tool():

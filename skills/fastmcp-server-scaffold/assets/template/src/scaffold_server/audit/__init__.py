@@ -41,9 +41,19 @@ class AuditMiddleware(Middleware):
         try:
             result = await call_next(context)
         except Exception as exc:
-            audit_log.info("write tool=%s by=%s target=%s outcome=error:%s",
-                           name, who, target, type(exc).__name__)
+            audit_log.info(
+                "write tool=%s by=%s target=%s outcome=error:%s",
+                name,
+                who,
+                target,
+                type(exc).__name__,
+            )
             raise
-        audit_log.info("write tool=%s by=%s target=%s confirmed=%s outcome=returned",
-                       name, who, target, bool(args.get("user_confirmed")))
+        audit_log.info(
+            "write tool=%s by=%s target=%s confirmed=%s outcome=returned",
+            name,
+            who,
+            target,
+            bool(args.get("user_confirmed")),
+        )
         return result

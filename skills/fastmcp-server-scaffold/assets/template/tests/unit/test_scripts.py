@@ -10,7 +10,9 @@ def test_next_version():
 
 
 def test_changelog_buckets_conventional_commits():
-    entry = bump_version.changelog_entry("1.3.0", ["feat: add holds", "fix(auth): refresh", "tidy up"])
+    entry = bump_version.changelog_entry(
+        "1.3.0", ["feat: add holds", "fix(auth): refresh", "tidy up"]
+    )
     assert "### Added\n\n- add holds" in entry
     assert "### Fixed\n\n- refresh" in entry
     assert "### Changed\n\n- tidy up" in entry
@@ -29,4 +31,6 @@ def test_login_uses_pkce_and_state(monkeypatch, tmp_path):
     url = oauth_login.authorize_url(load_config(env_file=None), "st4te", challenge)
     assert "code_challenge_method=S256" in url and "state=st4te" in url
     assert verifier != challenge
+
+
 # scaffold:end

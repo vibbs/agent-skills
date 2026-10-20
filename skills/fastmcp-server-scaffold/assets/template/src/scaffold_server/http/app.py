@@ -26,8 +26,12 @@ def build_auth(cfg: AppConfig):
 
 
 def create_http_app(cfg: AppConfig) -> FastMCP:
-    mcp = create_mcp(auth=build_auth(cfg), public_url=cfg.public_url, http=True,
-                     rate_limit_rps=cfg.rate_limit_rps)
+    mcp = create_mcp(
+        auth=build_auth(cfg),
+        public_url=cfg.public_url,
+        http=True,
+        rate_limit_rps=cfg.rate_limit_rps,
+    )
 
     @mcp.custom_route("/health", methods=["GET"])
     async def health(_: Request) -> Response:

@@ -37,7 +37,9 @@ async def get_item(item_id: str) -> dict[str, Any]:
     return await ExampleClient(load_config()).get_item(item_id)
 
 
-async def update_item_title(item_id: str, title: str, comment: str, user_confirmed: bool) -> dict[str, Any]:
+async def update_item_title(
+    item_id: str, title: str, comment: str, user_confirmed: bool
+) -> dict[str, Any]:
     if not safe_id(item_id):
         return failure("invalid_id", "item_id must be an id returned by example_list_items.")
     title = title.strip()
@@ -48,4 +50,6 @@ async def update_item_title(item_id: str, title: str, comment: str, user_confirm
     )
     if refusal:
         return refusal
-    return await ExampleClient(load_config()).update_item_title(item_id, title, format_comment(comment))
+    return await ExampleClient(load_config()).update_item_title(
+        item_id, title, format_comment(comment)
+    )

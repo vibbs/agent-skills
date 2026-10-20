@@ -38,7 +38,8 @@ def test_builds_remote_auth_provider():
 async def test_rfc8693_exchange_never_forwards_inbound_token():
     token_exchange._cache.clear()
     route = respx.post(EXCHANGE).mock(
-        return_value=httpx.Response(200, json={"access_token": "upstream-tok", "expires_in": 3600}))
+        return_value=httpx.Response(200, json={"access_token": "upstream-tok", "expires_in": 3600})
+    )
     assert await token_exchange.exchange(_cfg(), "inbound-jwt") == "upstream-tok"
     form = route.calls.last.request.read().decode()
     assert "grant-type%3Atoken-exchange" in form and "audience=api%3A%2F%2Fupstream" in form
@@ -51,7 +52,8 @@ async def test_rfc8693_exchange_never_forwards_inbound_token():
 async def test_entra_on_behalf_of_variant():
     token_exchange._cache.clear()
     route = respx.post(EXCHANGE).mock(
-        return_value=httpx.Response(200, json={"access_token": "obo", "expires_in": 3600}))
+        return_value=httpx.Response(200, json={"access_token": "obo", "expires_in": 3600})
+    )
     await token_exchange.exchange(_cfg(SCAFFOLD_EXCHANGE_GRANT="entra-obo"), "inbound-jwt")
     form = route.calls.last.request.read().decode()
     assert "requested_token_use=on_behalf_of" in form

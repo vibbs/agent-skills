@@ -55,7 +55,9 @@ async def test_every_tool_has_title_and_explicit_annotations(monkeypatch):
 async def test_descriptions_have_no_indented_lines(monkeypatch):
     """Regression: appending shared text to a still-indented __doc__ broke the dedent."""
     for tool in await _tools(monkeypatch, writes=True):
-        assert not any(line.startswith(" ") for line in (tool.description or "").splitlines()), tool.name
+        assert not any(line.startswith(" ") for line in (tool.description or "").splitlines()), (
+            tool.name
+        )
 
 
 async def test_bulk_and_per_item_tools_point_at_each_other(monkeypatch):
@@ -77,7 +79,7 @@ async def test_no_description_mentions_an_unregistered_tool(monkeypatch):
 
 async def test_write_description_keeps_confirmation_protocol_and_non_goals(monkeypatch):
     tools = {t.name: _norm(t.description or "") for t in await _tools(monkeypatch, writes=True)}
-    assert "Never ask a factless \"proceed?\"" in tools["example_update_item"]
+    assert 'Never ask a factless "proceed?"' in tools["example_update_item"]
     assert "never discuss or change status, owner or anything else" in tools["example_update_item"]
 
 
@@ -140,4 +142,6 @@ async def test_tools_advertise_output_schemas(monkeypatch):
         tools = {t.name: t for t in await client.list_tools()}
     schema = tools["example_list_items"].output_schema
     assert schema and "items" in schema["properties"]
+
+
 # scaffold:end

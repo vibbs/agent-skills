@@ -67,7 +67,7 @@ only the Python standard library. `--dry-run` lists the files first.
 ```bash
 cd <new-dir>
 git init && uv lock && uv sync --extra dev
-uv run ruff check --fix -q . && uv run ruff format -q .   # normalise imports after renaming
+uv run ruff check --fix --exit-zero -q . && uv run ruff format -q .   # normalise imports after renaming
 uv run ruff check . && uv run pyright && uv run pytest
 ```
 

@@ -38,6 +38,8 @@ def configure_stdio(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, token: str 
     monkeypatch.setenv("SCAFFOLD_OAUTH_CLIENT_ID", "client-123")
     monkeypatch.setenv("SCAFFOLD_OAUTH_TOKEN_URL", "https://idp.example.test/token")
     monkeypatch.setenv("SCAFFOLD_TOKEN_FILE", str(tmp_path / "tokens.json"))
-    tokens.save_tokens(config.load_config(env_file=None),
-                       {"access_token": token, "refresh_token": "r", "expires_in": 3600})
+    tokens.save_tokens(
+        config.load_config(env_file=None),
+        {"access_token": token, "refresh_token": "r", "expires_in": 3600},
+    )
     # scaffold:end

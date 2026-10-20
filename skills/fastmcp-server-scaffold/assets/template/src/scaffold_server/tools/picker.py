@@ -12,10 +12,17 @@ MAX_OPTIONS = 4  # what typical host pickers accept; page instead of dumping eve
 MORE_ID = "__more__"  # double-underscored so it can never collide with an upstream id
 
 
-def picker(question: str, items: list[dict[str, Any]], *, label_key: str = "label",
-           id_key: str = "id", offset: int = 0, note: str = "") -> dict[str, Any]:
+def picker(
+    question: str,
+    items: list[dict[str, Any]],
+    *,
+    label_key: str = "label",
+    id_key: str = "id",
+    offset: int = 0,
+    note: str = "",
+) -> dict[str, Any]:
     usable = [i for i in items if i.get(label_key) and i.get(id_key)]
-    page = usable[offset:offset + MAX_OPTIONS - 1]
+    page = usable[offset : offset + MAX_OPTIONS - 1]
     if len(page) < 2:
         return {}  # never ask a degenerate one-option question
     options = [{"label": str(i[label_key]), "id": str(i[id_key])} for i in page]

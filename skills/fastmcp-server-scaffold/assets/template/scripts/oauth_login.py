@@ -36,7 +36,9 @@ from scaffold_server.config import AppConfig, load_config
 
 def pkce_pair() -> tuple[str, str]:
     verifier = secrets.token_urlsafe(64)
-    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    challenge = (
+        base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    )
     return verifier, challenge
 
 
@@ -96,12 +98,15 @@ def wait_for_code(redirect_uri: str, expected_state: str, timeout_s: float) -> s
 
 
 async def exchange_code(cfg: AppConfig, code: str, verifier: str) -> dict:
-    request = token_request(cfg, {
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": cfg.oauth_redirect_uri,
-        "code_verifier": verifier,
-    })
+    request = token_request(
+        cfg,
+        {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": cfg.oauth_redirect_uri,
+            "code_verifier": verifier,
+        },
+    )
     async with httpx.AsyncClient(timeout=30.0) as http:
         resp = await http.post(cfg.oauth_token_url or "", **request)
     resp.raise_for_status()
@@ -109,9 +114,13 @@ async def exchange_code(cfg: AppConfig, code: str, verifier: str) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--timeout", type=float, default=180.0)
-    parser.add_argument("--no-browser", action="store_true", help="print the URL instead of opening it")
+    parser.add_argument(
+        "--no-browser", action="store_true", help="print the URL instead of opening it"
+    )
     args = parser.parse_args(argv)
     try:
         cfg = load_config()
@@ -135,8 +144,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     save_tokens(cfg, payload)
     if not payload.get("refresh_token"):
-        print("Warning: no refresh token returned; you will need to sign in again when the "
-              "access token expires.", file=sys.stderr)
+        print(
+            "Warning: no refresh token returned; you will need to sign in again when the "
+            "access token expires.",
+            file=sys.stderr,
+        )
     print(f"Signed in. Tokens saved to {cfg.token_file}", file=sys.stderr)
     return 0
 

@@ -30,6 +30,7 @@ SKILL_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE = SKILL_DIR / "assets" / "template"
 MANIFEST = SKILL_DIR / "assets" / "manifest.json"
 MARKER = re.compile(r"scaffold:(?:if\s+(?P<cond>\S+)|(?P<end>end))\b")
+SKIP_DIRS = {"__pycache__", ".ruff_cache", ".pytest_cache", ".venv", ".mypy_cache"}
 NAME_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 
 
@@ -135,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
 
     written: list[str] = []
     for src in sorted(TEMPLATE.rglob("*")):
-        if not src.is_file() or "__pycache__" in src.parts:
+        if not src.is_file() or SKIP_DIRS.intersection(src.parts):
             continue
         rel = src.relative_to(TEMPLATE).as_posix()
         cond = next((c for g, c in file_conditions.items() if fnmatch.fnmatch(rel, g)), None)
@@ -170,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     print("Next:")
     print(f"  cd {out}")
     print("  git init && uv lock && uv sync --extra dev")
-    print("  uv run ruff check --fix -q . && uv run ruff format -q .   # normalise renamed imports")
+    print("  uv run ruff check --fix --exit-zero -q . && uv run ruff format -q .   # normalise renamed imports")
     print("  uv run ruff check . && uv run pyright && uv run pytest")
     return 0
 

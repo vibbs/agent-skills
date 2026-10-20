@@ -16,12 +16,14 @@ SERVER_NAME = "scaffold-server"
 
 WRITE_TOOLS: frozenset[str] = frozenset({"example_update_item"})
 
-READ = ToolAnnotations(read_only_hint=True, destructive_hint=False, idempotent_hint=True,
-                       open_world_hint=True)
+READ = ToolAnnotations(
+    read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=True
+)
 # Writes: idempotent_hint is a deliberate per-tool decision. True invites clients to
 # retry; never set it on anything that creates or appends.
-WRITE = ToolAnnotations(read_only_hint=False, destructive_hint=True, idempotent_hint=False,
-                        open_world_hint=True)
+WRITE = ToolAnnotations(
+    read_only_hint=False, destructive_hint=True, idempotent_hint=False, open_world_hint=True
+)
 WRITE_META = {"anthropic/requiresUserInteraction": True}
 
 

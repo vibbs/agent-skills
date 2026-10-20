@@ -15,5 +15,6 @@ def _user_key(_: MiddlewareContext) -> str:
 
 
 def user_rate_limiter(rps: float) -> RateLimitingMiddleware:
-    return RateLimitingMiddleware(max_requests_per_second=rps, burst_capacity=int(rps * 2) or 1,
-                                  get_client_id=_user_key)
+    return RateLimitingMiddleware(
+        max_requests_per_second=rps, burst_capacity=int(rps * 2) or 1, get_client_id=_user_key
+    )

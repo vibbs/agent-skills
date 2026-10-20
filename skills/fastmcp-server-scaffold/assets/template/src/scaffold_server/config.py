@@ -187,7 +187,9 @@ def _layered(env: Mapping[str, str], env_file: Path | None) -> dict[str, str]:
     return merged
 
 
-def load_config(env: Mapping[str, str] | None = None, env_file: Path | None = Path(".env")) -> AppConfig:
+def load_config(
+    env: Mapping[str, str] | None = None, env_file: Path | None = Path(".env")
+) -> AppConfig:
     raw = _layered(os.environ if env is None else env, env_file)
     values: dict[str, object] = {
         k: (_as_list(v) if k in _LIST_FIELDS else v) for k, v in raw.items()
@@ -197,10 +199,18 @@ def load_config(env: Mapping[str, str] | None = None, env_file: Path | None = Pa
             "SCAFFOLD_UPSTREAM_BASE_URL is required: it is the API every tool calls. "
             "Set it in the environment or .env (see .env.example)."
         )
-    _check_choice(values, "transport", Transport,
-                  "This server was generated without the HTTP transport; it serves stdio only.")
-    _check_choice(values, "auth_mode", AuthMode,
-                  "This server was generated for one auth mode; regenerate to change it.")
+    _check_choice(
+        values,
+        "transport",
+        Transport,
+        "This server was generated without the HTTP transport; it serves stdio only.",
+    )
+    _check_choice(
+        values,
+        "auth_mode",
+        AuthMode,
+        "This server was generated for one auth mode; regenerate to change it.",
+    )
     cfg = AppConfig.model_validate(values)
     _check_mode_requirements(cfg)
     # scaffold:if auth=proxy|auth=resource-server
@@ -213,7 +223,9 @@ def _check_choice(values: dict[str, object], field: str, kind: object, why: str)
     allowed = get_args(kind)
     value = values.get(field)
     if value is not None and value not in allowed:
-        raise RuntimeError(f"{FIELD_ENV[field]}={value!r} is not supported: {why} Allowed: {list(allowed)}.")
+        raise RuntimeError(
+            f"{FIELD_ENV[field]}={value!r} is not supported: {why} Allowed: {list(allowed)}."
+        )
 
 
 def _require(cfg: AppConfig, field: str, why: str, fix: str = "") -> None:
@@ -231,8 +243,12 @@ def _check_mode_requirements(cfg: AppConfig) -> None:
                 "server would let anyone act with the configured upstream credential. "
                 "Use auth mode 'proxy' or 'resource-server' for HTTP."
             )
-        _require(cfg, "upstream_token", "in auth mode 'none'",
-                 "Put the upstream API key or personal access token there.")
+        _require(
+            cfg,
+            "upstream_token",
+            "in auth mode 'none'",
+            "Put the upstream API key or personal access token there.",
+        )
     # scaffold:end
     # scaffold:if auth=proxy|auth=resource-server
     if cfg.auth_mode in ("proxy", "resource-server"):
@@ -242,15 +258,21 @@ def _check_mode_requirements(cfg: AppConfig) -> None:
     # scaffold:if http
     if cfg.transport != "http":
         return
-    _require(cfg, "public_url", "in HTTP mode",
-             "Set it to this server's canonical https URL; OAuth metadata and icons use it.")
+    _require(
+        cfg,
+        "public_url",
+        "in HTTP mode",
+        "Set it to this server's canonical https URL; OAuth metadata and icons use it.",
+    )
     # scaffold:end
     # scaffold:if auth=proxy&http
     if cfg.transport == "http" and cfg.auth_mode == "proxy":
         _require(cfg, "oauth_authorize_url", "in HTTP proxy mode")
         _require(cfg, "userinfo_url", "in HTTP proxy mode to verify upstream tokens")
         _require(
-            cfg, "jwt_signing_key", "in HTTP proxy mode",
+            cfg,
+            "jwt_signing_key",
+            "in HTTP proxy mode",
             "Without it the proxy derives a signing key from the upstream client secret, "
             "so rotating that secret would sign every user out at once. Generate one with: "
             'python -c "import secrets; print(secrets.token_urlsafe(32))"',
@@ -262,7 +284,9 @@ def _check_mode_requirements(cfg: AppConfig) -> None:
             _require(cfg, field, "in HTTP resource-server mode to validate inbound tokens")
         for field in ("exchange_token_url", "exchange_client_id", "upstream_audience"):
             _require(
-                cfg, field, "in HTTP resource-server mode",
+                cfg,
+                field,
+                "in HTTP resource-server mode",
                 "Inbound tokens are issued for this server and must be exchanged for an "
                 "upstream token; forwarding them would be token passthrough.",
             )
@@ -296,6 +320,8 @@ def guard_client_id(value: str | None, env: Mapping[str, str]) -> None:
         "Check for quotes, whitespace, or a secret pasted into the id field. If the "
         "value really is correct, set SCAFFOLD_SKIP_CLIENT_ID_CHECK=true."
     )
+
+
 # scaffold:end
 
 

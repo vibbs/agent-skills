@@ -21,8 +21,13 @@ INSTRUCTIONS = (
 )
 
 
-def create_mcp(auth=None, public_url: str | None = None, *, http: bool = False,
-               rate_limit_rps: float | None = None) -> FastMCP:
+def create_mcp(
+    auth=None,
+    public_url: str | None = None,
+    *,
+    http: bool = False,
+    rate_limit_rps: float | None = None,
+) -> FastMCP:
     middleware: list = [AuditMiddleware()]
     # scaffold:if http
     if http and rate_limit_rps:

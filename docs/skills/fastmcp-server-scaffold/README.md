@@ -40,6 +40,11 @@ clients expect, and each is enforced by a test, so a later change can't quietly 
 The design notes behind each choice, checked against the MCP spec, FastMCP 4.1 and five
 clients, are in [design/gap-analysis.md](design/gap-analysis.md).
 
+<img src="media/tour.gif" width="960" alt="Terminal recording: scaffold.py generates the acme-tickets project with OAuth proxy auth, uv locks and installs 81 packages, ruff fixes and formats it, and pytest reports 77 passed">
+
+*A fresh `--auth proxy` project, straight from the template: it installs, normalises with
+ruff and passes its full test suite before any domain code is written.*
+
 ## When to use it
 
 Starting a new MCP server in Python that wraps an authenticated API, especially one that

@@ -31,6 +31,8 @@ Scaffold a production-shaped Python MCP server on FastMCP that fronts an authent
 
 **When it triggers:** Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth.
 
+<img src="skills/fastmcp-server-scaffold/media/tour.gif" width="960" alt="fastmcp-server-scaffold: animated preview">
+
 ```bash
 npx skills add vibbs/agent-skills --skill fastmcp-server-scaffold
 ```

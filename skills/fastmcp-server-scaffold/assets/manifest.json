@@ -1,0 +1,66 @@
+{
+  "optional_features": {
+    "output-schema": "typed TypedDict return values, so tools advertise an outputSchema",
+    "stateless": "stateless HTTP sessions, required for more than one replica",
+    "pypi": "release workflow publishing to PyPI with trusted publishing (uvx install)",
+    "registry": "server.json and an MCP Registry publish step (registry is in preview)",
+    "inspector-ci": "MCP Inspector --strict schema-portability check in CI",
+    "coverage": "pytest-cov with an 80% branch-coverage gate",
+    "security-scan": "gitleaks and zizmor workflows",
+    "healthcheck": "Docker HEALTHCHECK against /health"
+  },
+  "binary": [
+    "**/*.png",
+    "*.png"
+  ],
+  "files": {
+    "src/scaffold_server/auth/proxy.py": "auth=proxy&http",
+    "src/scaffold_server/auth/resource_server.py": "auth=resource-server&http",
+    "src/scaffold_server/auth/token_exchange.py": "auth=resource-server&http",
+    "src/scaffold_server/auth/tokens.py": "auth=proxy|auth=resource-server",
+    "src/scaffold_server/http/*": "http",
+    "scripts/oauth_login.py": "auth=proxy|auth=resource-server",
+    "scripts/verify_login.py": "auth=proxy&http",
+    "tests/unit/test_auth_proxy.py": "auth=proxy&http",
+    "tests/unit/test_auth_resource_server.py": "auth=resource-server&http",
+    "tests/unit/test_tokens.py": "auth=proxy|auth=resource-server",
+    "tests/unit/test_http_app.py": "http",
+    "Dockerfile": "http",
+    ".dockerignore": "http",
+    ".github/workflows/release.yml": "with=pypi",
+    ".github/workflows/security.yml": "with=security-scan",
+    "server.json": "with=registry",
+    "src/scaffold_server/tools/models.py": "with=output-schema"
+  },
+  "substitutions": [
+    {
+      "file": "src/scaffold_server/config.py",
+      "by": "auth",
+      "find": "AuthMode = Literal[\"proxy\", \"resource-server\", \"none\"]",
+      "values": {
+        "proxy": "AuthMode = Literal[\"proxy\"]",
+        "resource-server": "AuthMode = Literal[\"resource-server\"]",
+        "none": "AuthMode = Literal[\"none\"]"
+      }
+    },
+    {
+      "file": "src/scaffold_server/config.py",
+      "by": "auth",
+      "find": "DEFAULT_AUTH_MODE: AuthMode = \"proxy\"",
+      "values": {
+        "proxy": "DEFAULT_AUTH_MODE: AuthMode = \"proxy\"",
+        "resource-server": "DEFAULT_AUTH_MODE: AuthMode = \"resource-server\"",
+        "none": "DEFAULT_AUTH_MODE: AuthMode = \"none\""
+      }
+    },
+    {
+      "file": "src/scaffold_server/config.py",
+      "by": "transport",
+      "find": "Transport = Literal[\"stdio\", \"http\"]",
+      "values": {
+        "http": "Transport = Literal[\"stdio\", \"http\"]",
+        "stdio": "Transport = Literal[\"stdio\"]"
+      }
+    }
+  ]
+}

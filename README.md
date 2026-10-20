@@ -97,6 +97,7 @@ Previews and longer write-ups are in the [catalog](docs/catalog.md).
 | Preview | Skill | Description | When it triggers |
 |---|---|---|---|
 | <a href="docs/skills/architecture-explainer/"><img src="docs/skills/architecture-explainer/media/preview.png" width="240" alt="architecture-explainer preview"></a> | [`architecture-explainer`](docs/skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
+| <a href="docs/skills/fastmcp-server-scaffold/"><img src="docs/skills/fastmcp-server-scaffold/media/preview.png" width="240" alt="fastmcp-server-scaffold preview"></a> | [`fastmcp-server-scaffold`](docs/skills/fastmcp-server-scaffold/) | Scaffold a production-shaped Python MCP server on FastMCP that fronts an authenticated REST API on behalf of the signed-in user. | Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth. |
 <!-- catalog:end -->
 
 ## Compatibility

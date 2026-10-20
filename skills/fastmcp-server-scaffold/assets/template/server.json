@@ -1,0 +1,34 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.OWNER/scaffold-server",
+  "title": "Scaffold Server",
+  "description": "Acts on the upstream API as the signed-in user.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/OWNER/scaffold-server",
+    "source": "github"
+  },
+# scaffold:if with=pypi
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "scaffold-server",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "SCAFFOLD_UPSTREAM_BASE_URL", "description": "Upstream API base URL", "isRequired": true }
+      ]
+    }
+# scaffold:if http
+  ],
+# scaffold:end
+# scaffold:if !http
+  ]
+# scaffold:end
+# scaffold:end
+# scaffold:if http
+  "remotes": [
+    { "type": "streamable-http", "url": "https://YOUR-DEPLOYMENT.example.com/mcp" }
+  ]
+# scaffold:end
+}

@@ -1,0 +1,90 @@
+name: scaffold-template
+
+# Renders the fastmcp-server-scaffold template in several configurations and runs each
+# generated project's own checks, so the template can't rot unnoticed.
+
+on:
+  pull_request:
+    paths:
+      - "skills/fastmcp-server-scaffold/**"
+      - ".github/workflows/scaffold-template.yml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/fastmcp-server-scaffold/**"
+  schedule:
+    # Weekly: the template floats on fastmcp>=4.1,<4.2 and other ranges, so upstream
+    # releases can break it without any change here.
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: proxy-all-features
+            args: --auth proxy --with output-schema,stateless,pypi,registry,inspector-ci,coverage,security-scan,healthcheck
+            docker: true
+            inspector: true
+          - variant: proxy-minimal
+            args: --auth proxy
+            # A name sorting after "tests" exercises import order after renaming.
+            name: zeta-desk
+          - variant: proxy-stdio-only
+            args: --auth proxy --no-http
+          - variant: resource-server
+            args: --auth resource-server --with output-schema,coverage
+            docker: true
+          - variant: none-published
+            args: --auth none --with pypi,registry
+    name: render (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Render
+        run: >-
+          python3 skills/fastmcp-server-scaffold/scripts/scaffold.py
+          --out "$RUNNER_TEMP/gen" --name ${{ matrix.name || 'acme-tickets' }}
+          --repo example/${{ matrix.name || 'acme-tickets' }} ${{ matrix.args }}
+
+      - name: No template markers or tokens left
+        working-directory: ${{ runner.temp }}/gen
+        run: |
+          ! grep -rn "scaffold:if\|scaffold:end\|scaffold_server\|SCAFFOLD_\|OWNER/" .
+
+      - name: JSON files parse
+        working-directory: ${{ runner.temp }}/gen
+        run: |
+          for f in $(find . -name "*.json" -o -name "*.json.example"); do python3 -m json.tool "$f" > /dev/null; done
+
+      - name: Generated project checks
+        working-directory: ${{ runner.temp }}/gen
+        run: |
+          git init -q
+          uv lock
+          uv sync --locked --extra dev
+          uv run ruff check --fix --exit-zero .
+          uv run ruff format .
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run pyright
+          uv run pytest -v
+
+      - name: Inspector strict schema check
+        if: matrix.inspector
+        working-directory: ${{ runner.temp }}/gen
+        run: >-
+          npx --yes @modelcontextprotocol/inspector --cli
+          -e ACME_TICKETS_FEATURE_WRITES=true
+          uv run acme-tickets --method tools/list --strict
+
+      - name: Docker image builds
+        if: matrix.docker
+        working-directory: ${{ runner.temp }}/gen
+        run: docker build -t acme-tickets:test .

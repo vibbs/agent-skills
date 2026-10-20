@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "ask": [
+      "mcp__scaffold-server__example_update_item"
+    ]
+  }
+}

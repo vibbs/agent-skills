@@ -1,0 +1,60 @@
+name: release
+
+# Publishes to PyPI with trusted publishing (no API token stored anywhere) when a GitHub
+# Release is published. Configure the trusted publisher on pypi.org first:
+# https://docs.pypi.org/trusted-publishers/
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv build
+      # Install the built wheel and boot it once before publishing anything.
+      - run: uv run --isolated --no-project --with dist/*.whl python -c "import scaffold_server.server as s; s.create_mcp()"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  publish-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write  # the only permission this job needs; it never runs project code
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+# scaffold:if with=registry
+
+  publish-registry:
+    # The MCP Registry is in preview: breaking changes or data resets may happen.
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set server.json version from the release tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          jq --arg v "$version" '.version = $v | .packages[].version = $v' server.json > server.tmp && mv server.tmp server.json
+      - name: Publish to the MCP Registry
+        run: |
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+# scaffold:end

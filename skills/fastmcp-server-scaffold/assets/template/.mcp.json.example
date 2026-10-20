@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "scaffold-server": {
+      "command": "uv",
+      "args": ["run", "--directory", "/ABSOLUTE/PATH/TO/scaffold-server", "scaffold-server"],
+      "env": {
+        "SCAFFOLD_TRANSPORT": "stdio",
+        "SCAFFOLD_FEATURE_WRITES": "false"
+      }
+# scaffold:if http
+    },
+    "scaffold-server-remote": {
+      "type": "http",
+      "url": "https://YOUR-DEPLOYMENT.example.com/mcp"
+# scaffold:end
+    }
+  }
+}

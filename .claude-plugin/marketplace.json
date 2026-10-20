@@ -12,7 +12,7 @@
       "skills": "./",
       "strict": false,
       "description": "Reusable agent skills following the open Agent Skills specification.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Vaibhav Doddihal",
         "url": "https://github.com/vibbs"
@@ -20,7 +20,12 @@
       "homepage": "https://github.com/vibbs/agent-skills",
       "repository": "https://github.com/vibbs/agent-skills",
       "license": "MIT",
-      "keywords": ["skills", "agent-skills", "architecture", "diagrams"]
+      "keywords": [
+        "skills",
+        "agent-skills",
+        "architecture",
+        "diagrams"
+      ]
     }
   ]
 }

@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Pin actions to a commit SHA in your repository (Dependabot keeps them current);
+      # tags are used here so the template stays readable.
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      # --locked is load-bearing: a stale lockfile must fail here, not at image build.
+      - run: uv sync --locked --extra dev
+      - run: uv run ruff check src tests scripts
+      - run: uv run ruff format --check src tests scripts
+      - run: uv run pyright
+      - run: uv run pytest -v
+      # scaffold:if with=inspector-ci
+      # Cross-client schema portability check from the official MCP Inspector.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: MCP Inspector strict schema check (all flags on)
+        run: >-
+          npx --yes @modelcontextprotocol/inspector --cli
+          -e SCAFFOLD_FEATURE_WRITES=true
+          uv run scaffold-server --method tools/list --strict
+      # scaffold:end

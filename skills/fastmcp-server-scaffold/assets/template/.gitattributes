@@ -1,0 +1,4 @@
+# Normalise line endings so an editor rewriting a file can't turn a small change into a
+# full-file diff.
+* text=auto eol=lf
+*.png binary

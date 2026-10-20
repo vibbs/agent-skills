@@ -22,4 +22,18 @@ npx skills add vibbs/agent-skills --skill architecture-explainer
 ```
 
 [Overview](skills/architecture-explainer/) · [Source](../skills/architecture-explainer/)
+
+## fastmcp-server-scaffold
+
+Scaffold a production-shaped Python MCP server on FastMCP that fronts an authenticated REST API on behalf of the signed-in user.
+
+**The problem:** Getting an MCP server to work in a demo takes an afternoon. Getting one that is safe to hand to real users takes weeks, because the hard parts aren't in the quickstarts: per-user OAuth without a shared service account, tool descriptions that stop the model looping a per-item tool, write confirmations a model can't skip, errors the model can explain, annotations that real clients now use to decide when to ask permission, and a protocol that changed underneath everyone in 2026. Most servers rediscover these one incident at a time.
+
+**When it triggers:** Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth.
+
+```bash
+npx skills add vibbs/agent-skills --skill fastmcp-server-scaffold
+```
+
+[Overview](skills/fastmcp-server-scaffold/) · [Source](../skills/fastmcp-server-scaffold/)
 <!-- catalog:end -->

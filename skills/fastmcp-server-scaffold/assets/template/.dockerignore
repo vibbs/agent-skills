@@ -1,0 +1,25 @@
+# Mirrors .gitignore so secrets never enter the build context.
+.env
+.env.*
+config.json
+*.pem
+*.key
+*.crt
+tokens.json
+.mcp.json
+.git/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+dist/
+
+# Not needed in the image
+tests/
+docs/
+infra/
+scripts/
+.claude/
+.github/
+
+# NOTE: uv.lock is deliberately NOT ignored: the image is built from it.

@@ -6,6 +6,9 @@ Contributions are welcome: new skills, fixes to existing ones, and tooling impro
 
 - **General-purpose only.** No company names, internal project names, private hostnames,
   credentials, or machine-specific paths. A skill should work for anyone who installs it.
+  One exception: a skill may include a single attribution link to the repository
+  author's own public roadmap or article in the reports it generates (for example,
+  `readiness-check` credits the BlockSimplified roadmap it is built on).
 - **Follow the [Agent Skills specification](https://agentskills.io/specification).**
   `name` must be lowercase letters, digits and hyphens, and must match the folder name.
   `description` must say what the skill does and when to use it, in under 1024 characters.

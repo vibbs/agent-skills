@@ -1,0 +1,1613 @@
+{
+  "title": "Vibecoder Production Roadmap",
+  "source_count": 111,
+  "phases": {
+    "P1": {
+      "name": "Project setup",
+      "trigger": "git init — before the first feature"
+    },
+    "P2": {
+      "name": "Pre-launch",
+      "trigger": "someone other than you is about to use it, or real data is about to go in"
+    },
+    "P3": {
+      "name": "Growth",
+      "trigger": "real traffic, paying users or a second engineer — usually the first incident or the first \"it's slow\""
+    },
+    "P4": {
+      "name": "Scale & enterprise — core",
+      "trigger": "a customer, a compliance requirement or the budget forces it"
+    },
+    "P4-B2B": {
+      "name": "Scale & enterprise — B2B track",
+      "trigger": "an enterprise buyer forces it"
+    },
+    "P4-B2C": {
+      "name": "Scale & enterprise — B2C track",
+      "trigger": "consumer traffic forces it"
+    }
+  },
+  "levels": {
+    "L1": "Beginner",
+    "L2": "Intermediate",
+    "L3": "Advanced"
+  },
+  "groups": [
+    "Traffic & edge",
+    "Failure handling",
+    "Async & messaging",
+    "Real-time",
+    "Data layer",
+    "Distributed theory",
+    "Concurrency & runtime",
+    "Scaling & performance",
+    "Delivery & deploys",
+    "Observability & SRE",
+    "Security",
+    "Disaster recovery",
+    "Networking",
+    "Compliance"
+  ],
+  "items": [
+    {
+      "name": "Project Scaffolding",
+      "origin": "added",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Start from a standard layout, linter and formatter — not a blank folder.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Semantic Versioning",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Version from v0.1.0 so every release and rollback has a name.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Logging",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [
+        "Metrics",
+        "Distributed Tracing"
+      ],
+      "note": "Structured logs from the first endpoint; never log secrets or PII.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Dependency Hell",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Dependency management: commit the lockfile, pin versions, add packages deliberately.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Secrets Management",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [
+        "IAM"
+      ],
+      "note": "Keys live in env vars or a secret store — never in git or frontend code.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SQL Injection",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Parameterised queries or an ORM from the very first query.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "XSS",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P1",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Let the framework escape output; avoid raw HTML injection.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Input Validation",
+      "origin": "added",
+      "group": "Security",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Validate every request at the boundary with a schema (zod, pydantic).",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "AuthN & AuthZ Middleware",
+      "origin": "added",
+      "group": "Security",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [
+        "OAuth",
+        "SSO"
+      ],
+      "note": "Who you are and what you may do — enforced server-side on every route.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Testing",
+      "origin": "added",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Test runner wired in; one small test for anything touching money, auth or parsing.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "CI/CD",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [
+        "Build Caching"
+      ],
+      "note": "Lint and test on every push; deploy from main, not your laptop.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Docker",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [
+        "Kubernetes"
+      ],
+      "note": "Reproducible environments — or your platform's equivalent.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Monitoring",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [
+        "Observability",
+        "SLIs"
+      ],
+      "note": "Error tracking and uptime visibility from day one.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Health Checks",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P1",
+      "level": "L2",
+      "grows_into": [
+        "Liveness & Readiness Probes"
+      ],
+      "note": "A /health endpoint that checks the app and its database.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Database Migrations",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P1",
+      "level": "L3",
+      "grows_into": [
+        "Schema Versioning"
+      ],
+      "note": "A migration tool (alembic, prisma migrate) before the first schema change.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "TLS",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [],
+      "note": "HTTPS everywhere — usually free from your host.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Backups",
+      "origin": "post",
+      "group": "Disaster recovery",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [
+        "Disaster Recovery"
+      ],
+      "note": "Automated backups before real data — and one tested restore.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Rollbacks",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [
+        "Blue-Green Deployment"
+      ],
+      "note": "Know your one-command rollback before launch; migrations make it harder.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "DNS",
+      "origin": "post",
+      "group": "Networking",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Domain and records set up before launch; lower TTLs before you change them.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "CDN",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [
+        "Edge Caching"
+      ],
+      "note": "Static assets from a CDN — most hosts include it.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "CORS",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Replace the dev-time wildcard with an explicit allow-list.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Encryption in Transit",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "TLS between app, database and third-party services too.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Encryption at Rest",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Confirm your database and storage encrypt at rest (managed ones usually do).",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "CSRF",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Needed once cookie-based sessions go live; frameworks ship tokens.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "OAuth",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "SSO"
+      ],
+      "note": "Use a provider or library; validate state and redirect URIs.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "IAM",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "No root keys in production; least privilege for services and people.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Feature Flags",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Canary Releases"
+      ],
+      "note": "Ship dark and switch off a broken feature without a redeploy — worth it at any size.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Timeouts",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Circuit Breakers"
+      ],
+      "note": "Every outbound call — LLM APIs included — gets a timeout.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Retries",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Exponential Backoff",
+        "Idempotency"
+      ],
+      "note": "Retry only transient failures, and only operations that are safe to repeat.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Webhooks",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Verify signatures, respond fast, process async, expect duplicates.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Cron Jobs",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Distributed Locks"
+      ],
+      "note": "Scheduled jobs need logs, failure alerts and protection against overlapping runs.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Race Conditions",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Optimistic Locking"
+      ],
+      "note": "Double-clicks and concurrent requests — lean on DB constraints and transactions.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Database Indexing",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Query Optimization"
+      ],
+      "note": "Index what you filter and join on before real data arrives.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "N+1 Queries",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "AI-written ORM code loves N+1 — check query counts per request.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Serverless Limits",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Function timeouts and payload caps — long LLM calls hit them first.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Server-Sent Events",
+      "origin": "post",
+      "group": "Real-time",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "The simple way to stream LLM tokens to the browser.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Alerts",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "SLOs"
+      ],
+      "note": "Know it's down before your users tell you — start with an uptime ping.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Reverse Proxies",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Load Balancing"
+      ],
+      "note": "If self-hosting: TLS termination, compression and buffering in front of the app.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "PII Handling",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "GDPR & Privacy"
+      ],
+      "note": "Collect less, keep it out of logs, know where it lives.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Tenant Isolation",
+      "origin": "added",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [
+        "Data Residency"
+      ],
+      "note": "Every query scoped by tenant (row-level security on) — cross-tenant leaks are launch-day bugs.",
+      "applies": "multi-tenant apps",
+      "vibbs_placed": false
+    },
+    {
+      "name": "Prompt Injection",
+      "origin": "added",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Treat model input and output as untrusted; limit what tools can do.",
+      "applies": "AI features",
+      "vibbs_placed": false
+    },
+    {
+      "name": "LLM Token Budgets",
+      "origin": "added",
+      "group": "Scaling & performance",
+      "phase": "P2",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Per-user caps and spend alerts so one user can't burn your bill.",
+      "applies": "AI features",
+      "vibbs_placed": false
+    },
+    {
+      "name": "Idempotency",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P2",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Idempotency keys on payments, webhooks and anything that gets retried.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SSRF",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P2",
+      "level": "L3",
+      "grows_into": [],
+      "note": "If you fetch user-supplied URLs (agents do), block internal addresses.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Production Incidents",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [
+        "Postmortems"
+      ],
+      "note": "Your first incident is the Phase 3 trigger — have a status page and a calm checklist.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Vertical Scaling",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [
+        "Horizontal Scaling"
+      ],
+      "note": "A bigger box is a legitimate first fix.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Latency",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [
+        "P99 Latency"
+      ],
+      "note": "Measure before optimising — guessing is not profiling.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Throughput",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [],
+      "note": "The requests per second you can actually sustain — know your ceiling.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Metrics",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [
+        "SLIs"
+      ],
+      "note": "Rate, errors and duration per endpoint.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Rate Limiting",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [],
+      "note": "Protect endpoints from abuse and runaway clients — auth endpoints first.",
+      "applies": null,
+      "vibbs_placed": true
+    },
+    {
+      "name": "Long Polling",
+      "origin": "post",
+      "group": "Real-time",
+      "phase": "P3",
+      "level": "L1",
+      "grows_into": [
+        "WebSockets"
+      ],
+      "note": "Often good enough before you reach for WebSockets.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Caching",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Cache Invalidation"
+      ],
+      "note": "Cache expensive reads once you've measured they're the bottleneck.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Horizontal Scaling",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Autoscaling"
+      ],
+      "note": "Stateless app servers so you can run more than one.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Load Balancing",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "API Gateways"
+      ],
+      "note": "Needed the moment you run two instances — often built into the platform.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Query Optimization",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Read the EXPLAIN plan for your slowest queries.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Connection Pooling",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Serverless + Postgres runs out of connections fast — use a pooler.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Message Queues",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Dead Letter Queues",
+        "Pub/Sub"
+      ],
+      "note": "Move slow work (emails, AI jobs) off the request path.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Exponential Backoff",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Circuit Breakers"
+      ],
+      "note": "Back off with jitter so retries don't turn into a retry storm.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "WebSockets",
+      "origin": "post",
+      "group": "Real-time",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Two-way real-time; plan for reconnects and long-lived connections.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Eventual Consistency",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "CAP Theorem"
+      ],
+      "note": "Caches, replicas and queues mean reads can be stale — design for it.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Optimistic Locking",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Pessimistic Locking"
+      ],
+      "note": "A version column stops two editors overwriting each other.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Memory Leaks",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Memory that climbs until restart — watch long-running processes.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "P99 Latency",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Tail Latency"
+      ],
+      "note": "Averages lie — the slowest 1% is someone's whole experience.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Cold Starts",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "The serverless first-request delay; keep functions lean or warm.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Cost Optimization",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Read the cloud bill monthly and set budget alerts.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Rolling Deployments",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Blue-Green Deployment"
+      ],
+      "note": "Replace instances gradually — most platforms do this by default.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "API Versioning",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Version once someone else's code depends on your API.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Build Caching",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Fast CI matters once a second engineer is waiting on it.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Observability",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [
+        "Distributed Tracing"
+      ],
+      "note": "Logs, metrics and traces connected, so you can answer questions you didn't plan for.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "On-Call",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Who gets paged, and with which runbook.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Postmortems",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P3",
+      "level": "L2",
+      "grows_into": [],
+      "note": "A blameless write-up after every real incident.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Cache Invalidation",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [
+        "Edge Caching"
+      ],
+      "note": "Decide how stale is acceptable before you cache anything.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Circuit Breakers",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Stop calling a dependency that's already failing.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Dead Letter Queues",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Failed messages park somewhere visible instead of vanishing.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Pub/Sub",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [
+        "Event-Driven Architecture"
+      ],
+      "note": "One event, many consumers.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Distributed Locks",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Stop two instances running the same job.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Pessimistic Locking",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Lock rows for balances and inventory (SELECT … FOR UPDATE).",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Deadlocks",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Consistent lock ordering and short transactions.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Thread Safety",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Shared mutable state across threads or workers.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Schema Versioning",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Expand-and-contract migrations while users are live.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "JWT Rotation",
+      "origin": "post",
+      "group": "Security",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Short-lived tokens, a refresh flow, key rotation and revocation.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "HTTP/2 & HTTP/3",
+      "origin": "post",
+      "group": "Networking",
+      "phase": "P3",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Mostly handled by your CDN or host — know what you're getting.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Autoscaling",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Scale on real signals, with a ceiling so a bug can't scale your bill.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Read Replicas",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Partitioning"
+      ],
+      "note": "Offload reads and accept replica lag.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Replication",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "High availability for the database.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Disaster Recovery",
+      "origin": "post",
+      "group": "Disaster recovery",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Failover"
+      ],
+      "note": "A written recovery target and a rehearsed recovery.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Failover",
+      "origin": "post",
+      "group": "Disaster recovery",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Multi-Region Deployment"
+      ],
+      "note": "Automatic switch to a standby when the primary dies.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SLIs",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "SLOs"
+      ],
+      "note": "The few numbers that define \"working\" for users.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SLOs",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Error Budgets",
+        "SLAs"
+      ],
+      "note": "Targets on those numbers — reliability as a product decision.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Infrastructure as Code",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Terraform"
+      ],
+      "note": "Environments rebuilt from code, not console clicks.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Terraform",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "The most common infrastructure-as-code tool.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Blue-Green Deployment",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [
+        "Canary Releases"
+      ],
+      "note": "Two environments and an instant switch — double cost while it runs.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Liveness & Readiness Probes",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "The orchestrator restarts dead apps and holds traffic until they're ready.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "API Gateways",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "One front door for auth, rate limits and routing across services.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "CAP Theorem",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "During a network split, you choose consistency or availability.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "gRPC",
+      "origin": "post",
+      "group": "Networking",
+      "phase": "P4",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Typed, fast service-to-service calls.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Distributed Tracing",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Follow one request across services.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Error Budgets",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Spend unreliability deliberately on shipping speed.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Kubernetes",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [
+        "Helm Charts"
+      ],
+      "note": "When you truly run many services — a budget decision, not a default.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Helm Charts",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Packaging for Kubernetes deployments.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Service Discovery",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Services find each other without hard-coded addresses.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Canary Releases",
+      "origin": "post",
+      "group": "Delivery & deploys",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Release to 1% first, watch, then widen.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Event-Driven Architecture",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Services react to events instead of calling each other.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Distributed Transactions",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [
+        "Saga Pattern"
+      ],
+      "note": "Avoid them when you can.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Saga Pattern",
+      "origin": "post",
+      "group": "Async & messaging",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Multi-step workflows with compensating actions.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Backpressure",
+      "origin": "post",
+      "group": "Failure handling",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Slow the producer when consumers can't keep up.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Partitioning",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [
+        "Sharding"
+      ],
+      "note": "Split big tables, often by time.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Leader Election",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Exactly one node in charge.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Network Partitions",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Nodes that can't see each other — decide the behaviour in advance.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Clock Skew",
+      "origin": "post",
+      "group": "Distributed theory",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Machine clocks disagree — never order events by wall clock alone.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Tail Latency",
+      "origin": "post",
+      "group": "Scaling & performance",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "At fan-out scale, the slowest backend sets your speed.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Garbage Collection",
+      "origin": "post",
+      "group": "Concurrency & runtime",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "GC pauses show up as latency spikes at scale.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Chaos Engineering",
+      "origin": "post",
+      "group": "Observability & SRE",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Break things on purpose to prove recovery works.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "TCP vs UDP",
+      "origin": "post",
+      "group": "Networking",
+      "phase": "P4",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Reliability versus speed — matters for real-time media and games.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SSO",
+      "origin": "added",
+      "group": "Security",
+      "phase": "P4-B2B",
+      "level": "L2",
+      "grows_into": [],
+      "note": "SAML/OIDC login — enterprise buyers ask early in the sales cycle.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Audit Logs",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P4-B2B",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Who did what, and when — a standard enterprise request.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SLAs",
+      "origin": "added",
+      "group": "Observability & SRE",
+      "phase": "P4-B2B",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Contractual uptime — promise only what your SLOs support.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "SOC2 & Audits",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P4-B2B",
+      "level": "L3",
+      "grows_into": [],
+      "note": "The security-questionnaire gate on B2B deals.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Data Residency",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P4-B2B",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Customers require their data kept in their region.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Edge Caching",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P4-B2C",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Cache dynamic content close to users.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "WAF",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P4-B2C",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Filter malicious traffic before it reaches the app.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "DDoS Protection",
+      "origin": "post",
+      "group": "Traffic & edge",
+      "phase": "P4-B2C",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Absorb floods — a CDN-level service.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "GDPR & Privacy",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P4-B2C",
+      "level": "L2",
+      "grows_into": [],
+      "note": "Consent, export and deletion at consumer scale.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Accessibility (WCAG 2.1 AA)",
+      "origin": "added",
+      "group": "Compliance",
+      "phase": "P4-B2C",
+      "level": "L2",
+      "grows_into": [],
+      "note": "A legal requirement for many EU consumer services.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Sharding",
+      "origin": "post",
+      "group": "Data layer",
+      "phase": "P4-B2C",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Split data across databases — the last resort after replicas and caching.",
+      "applies": null,
+      "vibbs_placed": false
+    },
+    {
+      "name": "Multi-Region Deployment",
+      "origin": "post",
+      "group": "Disaster recovery",
+      "phase": "P4-B2C",
+      "level": "L3",
+      "grows_into": [],
+      "note": "Serve users close to them and survive a region outage.",
+      "applies": null,
+      "vibbs_placed": false
+    }
+  ],
+  "overrides": [
+    {
+      "key": "Health data",
+      "law": "HIPAA (US)",
+      "pulls": [
+        "Encryption at Rest",
+        "Audit Logs",
+        "IAM",
+        "PII Handling",
+        "Backups"
+      ],
+      "to": "P2",
+      "extra": "Sign BAAs with vendors that touch the data — including your LLM provider."
+    },
+    {
+      "key": "Payments",
+      "law": "PCI DSS",
+      "pulls": [
+        "Idempotency",
+        "Webhooks",
+        "Pessimistic Locking",
+        "Audit Logs"
+      ],
+      "to": "P2",
+      "extra": "P1 decision: never touch raw card data — let Stripe or Razorpay hold it."
+    },
+    {
+      "key": "Kids as users",
+      "law": "COPPA (US) · DPDP children's data (India)",
+      "pulls": [
+        "PII Handling"
+      ],
+      "to": "P2",
+      "extra": "Verifiable parental consent before a child's data goes in."
+    },
+    {
+      "key": "AI features",
+      "law": "—",
+      "pulls": [
+        "Rate Limiting",
+        "LLM Token Budgets",
+        "Prompt Injection",
+        "Timeouts",
+        "Serverless Limits",
+        "SSRF",
+        "Server-Sent Events"
+      ],
+      "to": "P2",
+      "extra": "One unprotected endpoint calling a paid model can run up a bill overnight — rate limiting moves up from P3."
+    },
+    {
+      "key": "EU users",
+      "law": "GDPR · European Accessibility Act",
+      "pulls": [
+        "GDPR & Privacy",
+        "Accessibility (WCAG 2.1 AA)"
+      ],
+      "to": "P2",
+      "extra": "EAA has applied since 28 Jun 2025 (WCAG 2.1 AA via EN 301 549); micro-enterprises are exempt."
+    },
+    {
+      "key": "Indian users",
+      "law": "DPDP Act 2023",
+      "pulls": [
+        "PII Handling"
+      ],
+      "to": "P2",
+      "extra": "Consent notices, breach reporting and children's-data rules apply from 13 May 2027."
+    }
+  ]
+}

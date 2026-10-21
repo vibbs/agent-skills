@@ -98,7 +98,12 @@ Previews and longer write-ups are in the [catalog](docs/catalog.md).
 |---|---|---|---|
 | <a href="docs/skills/architecture-explainer/"><img src="docs/skills/architecture-explainer/media/preview.png" width="240" alt="architecture-explainer preview"></a> | [`architecture-explainer`](docs/skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
 | <a href="docs/skills/fastmcp-server-scaffold/"><img src="docs/skills/fastmcp-server-scaffold/media/preview.png" width="240" alt="fastmcp-server-scaffold preview"></a> | [`fastmcp-server-scaffold`](docs/skills/fastmcp-server-scaffold/) | Scaffold a production-shaped Python MCP server on FastMCP that fronts an authenticated REST API on behalf of the signed-in user. | Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth. |
+| <a href="docs/skills/readiness-check/"><img src="docs/skills/readiness-check/media/preview.png" width="240" alt="readiness-check preview"></a> | [`readiness-check`](docs/skills/readiness-check/) | Review a project's production readiness by phase: work out whether it's in project setup, pre-launch, growth or scale, check what the current phase needs, and say what to skip for now. | Use when the user asks 'is this ready to launch?', 'what am I missing before going live?', 'production readiness check', 'review my app for production', 'what should I add next?', or is about to ship a vibe-coded or AI-built app to real users. |
 <!-- catalog:end -->
+
+The `readiness-check` skill reviews projects against the BlockSimplified Vibecoder
+Production Roadmap, which sorts a public list of 111 production topics into phases and
+levels.
 
 ## Compatibility
 

@@ -1,0 +1,30 @@
+{
+  "name": "taskboard-api",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "test": "node --test test/",
+    "migrate": "node-pg-migrate up"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-pg-migrate": "^7.7.1",
+    "pg": "^8.13.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
+    "supertest": "^7.0.0"
+  }
+}

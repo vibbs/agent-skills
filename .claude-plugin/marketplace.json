@@ -24,7 +24,10 @@
         "skills",
         "agent-skills",
         "architecture",
-        "diagrams"
+        "diagrams",
+        "production-readiness",
+        "review",
+        "launch-checklist"
       ]
     }
   ]

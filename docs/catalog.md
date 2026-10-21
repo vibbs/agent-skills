@@ -38,4 +38,18 @@ npx skills add vibbs/agent-skills --skill fastmcp-server-scaffold
 ```
 
 [Overview](skills/fastmcp-server-scaffold/) · [Source](../skills/fastmcp-server-scaffold/)
+
+## readiness-check
+
+Review a project's production readiness by phase: work out whether it's in project setup, pre-launch, growth or scale, check what the current phase needs, and say what to skip for now.
+
+**The problem:** People shipping AI-built apps often don't know which production concerns matter yet. The usual answer is a flat checklist of a hundred topics, from logging and backups to Kubernetes and multi-region failover, with no sense of order. Faced with that, people either freeze, or try to do all of it before launch and spend weeks on infrastructure the app won't need for a year. Meanwhile the gaps that matter on launch day, such as an API key shipped to the browser or a database table anyone can read, sit in the same list as everything else.
+
+**When it triggers:** Use when the user asks 'is this ready to launch?', 'what am I missing before going live?', 'production readiness check', 'review my app for production', 'what should I add next?', or is about to ship a vibe-coded or AI-built app to real users.
+
+```bash
+npx skills add vibbs/agent-skills --skill readiness-check
+```
+
+[Overview](skills/readiness-check/) · [Source](../skills/readiness-check/)
 <!-- catalog:end -->

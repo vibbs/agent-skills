@@ -3,6 +3,10 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![validate](https://github.com/vibbs/agent-skills/actions/workflows/validate.yml/badge.svg)](https://github.com/vibbs/agent-skills/actions/workflows/validate.yml)
 
+**Beyond the code.** Most agent skills help you write code faster. These help with
+everything around the code: setting a project up to a standard, explaining how it works,
+and knowing when it's ready to ship.
+
 A collection of reusable skills for AI coding agents. Each skill is a folder with a
 `SKILL.md` and any supporting references, assets or scripts, written to the open
 [Agent Skills specification](https://agentskills.io/specification) so it works in any

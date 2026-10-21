@@ -116,7 +116,9 @@ Roadmap based on a list of 111 production topics by {{ORIGINAL_POST_HANDLE}} (ht
       "Supabase",
       "OpenAI SDK",
       "Vercel"
-    ]
+    ],
+    "commit": null,
+    "dirty": false
   },
   "answers": {
     "audience": "about_to_launch",

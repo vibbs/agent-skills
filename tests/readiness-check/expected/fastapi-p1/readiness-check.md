@@ -89,7 +89,9 @@ Roadmap based on a list of 111 production topics by {{ORIGINAL_POST_HANDLE}} (ht
       "FastAPI",
       "SQLAlchemy 2",
       "SQLite"
-    ]
+    ],
+    "commit": null,
+    "dirty": false
   },
   "answers": {
     "audience": "just_me",

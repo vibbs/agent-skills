@@ -66,7 +66,9 @@ runs, or run in CI.
 3. **Asks at most six short questions** the repo can't answer: who uses it, whether
    there's real traffic, B2B or B2C, domain flags, where users are, and multi-tenancy.
 4. **Decides the phase and overrides,** then classifies every in-scope item.
-5. **Writes `readiness-check.md`** and renders `.readiness/report.html`. It asks before
+5. **Writes `readiness-check.md`** and renders a dated report, `.readiness/report-<date>.html`,
+   stamped with the check date and commit. Earlier reports and the previous
+   `readiness-check.md` are kept, never overwritten. It asks before
    touching `.gitignore` and never changes your code.
 
 ## Install

@@ -75,6 +75,9 @@ code, .mono { font-family: var(--mono); font-size: 0.86em; }
 .eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .head { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; justify-content: space-between; }
 .head-meta { color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
+.checked { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 6px; font-size: 0.92rem; }
+.checked strong { color: var(--text); }
+.checked .mono { color: var(--muted); }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 0.9rem; background: var(--accent-bg); color: var(--text); border: 1px solid var(--accent); }
 
 /* Phase track */
@@ -278,6 +281,12 @@ footer p + p { margin-top: 6px; }
     el.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
   }
 
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  function longDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    return m ? Number(m[3]) + " " + MONTHS[Number(m[2]) - 1] + " " + m[1] : String(iso || "unknown date");
+  }
+
   function isPlaceholder(v) { return !v || /^\{\{.*\}\}$/.test(v); }
 
   function copyText(text) {
@@ -343,7 +352,9 @@ footer p + p { margin-top: 6px; }
     items.forEach(function (it) { byName[it.name] = it; });
     var phaseIdx = Math.max(0, PHASES.map(function (p) { return p.id; }).indexOf(String(d.phase.id).slice(0, 2)));
     var credits = d.credits || {};
-    document.title = "Readiness check: " + d.project.name;
+    var when = longDate(d.generated_on);
+    document.title = "Readiness check: " + d.project.name + " (" + when + ")";
+    var commit = d.project.commit;
 
     // Header
     app.appendChild(h("header", null,
@@ -351,7 +362,10 @@ footer p + p { margin-top: 6px; }
       h("div", { class: "head" },
         h("div", null,
           h("h1", { text: d.project.name }),
-          h("p", { class: "head-meta", text: d.generated_on + (d.project.stack && d.project.stack.length ? " · " + d.project.stack.join(", ") : "") })),
+          h("p", { class: "checked" },
+            h("span", null, "Checked on ", h("strong", null, h("time", { datetime: d.generated_on, text: when }))),
+            commit ? h("span", { class: "mono", text: "at commit " + commit + (d.project.dirty ? " + uncommitted changes" : "") }) : null),
+          d.project.stack && d.project.stack.length ? h("p", { class: "head-meta", text: d.project.stack.join(", ") }) : null),
         h("span", { class: "pill" }, icon("pin"), d.phase.id + " " + d.phase.name))));
 
     // Progress per reviewed phase (P1, and P2 including pulled items). n/a items don't count.
@@ -548,7 +562,7 @@ footer p + p { margin-top: 6px; }
         postUrl ? [" (", h("a", { href: postUrl, rel: "noopener noreferrer", text: "original post" }), ")"] : null,
         " · Full roadmap: ",
         isPlaceholder(roadmapUrl) ? (roadmapUrl || "") : h("a", { href: roadmapUrl, rel: "noopener noreferrer", text: "BlockSimplified" })),
-      h("p", { text: "Generated from readiness-check.md (schema " + d.schema + ", skill " + d.skill_version + "). That file is the source of truth." })));
+      h("p", { text: "Generated on " + when + " from readiness-check.md (schema " + d.schema + ", skill " + d.skill_version + "). That file is the source of truth; findings reflect the code as it was on that date." })));
   }
 
   window.addEventListener("beforeprint", function () {

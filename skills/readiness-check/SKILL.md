@@ -21,11 +21,17 @@ for now**. The "not yet" verdict is the point. A flat checklist either freezes p
 pushes them into over-engineering; this skill says "skip Kubernetes, you're pre-launch"
 as confidently as it says "your API key is in the browser".
 
-It writes exactly two files in the user's project:
+It writes only into these places in the user's project:
 
 - `readiness-check.md` at the root: the source of truth, readable, with a machine-state
-  block at the bottom that the next run reuses.
-- `.readiness/report.html`: a self-contained, one-page visual report rendered from it.
+  block at the bottom that the next run reuses. Always this name, so the next run finds it.
+- `.readiness/report-<YYYY-MM-DD>.html`: a self-contained, one-page visual report rendered
+  from it. Dated, so a new run never overwrites an older report.
+- `.readiness/history/readiness-check-<YYYY-MM-DD>.md`: the previous run's
+  `readiness-check.md`, copied there before it is overwritten.
+
+Every report says when it was checked and, in a git repo, at which commit, because
+`file:line` evidence goes stale as soon as the code changes.
 
 It never changes the user's code.
 
@@ -88,6 +94,10 @@ If `readiness-check.md` exists at the project root, read the JSON block under
 If the block is missing or invalid JSON, say so in one line and treat it as a first run;
 don't overwrite the user's notes without mentioning it.
 
+Before this run overwrites it, copy the existing `readiness-check.md` to
+`.readiness/history/readiness-check-<its generated_on>.md` (add `-2`, `-3` if that name
+is taken). Earlier runs are never lost.
+
 ### 2. Scan the repo
 
 Find the facts the classification needs. Read, don't run: no installs, no builds, no
@@ -112,6 +122,10 @@ starting the app.
   columns, locale files, currencies, `org_id` / `team_id` columns.
 
 Write down each finding with its `file:line`. Everything later cites these.
+
+Record what was checked: in a git repo, the short commit hash (`git rev-parse --short
+HEAD`) and whether there are uncommitted changes (`git status --porcelain` is not empty).
+They go in `project.commit` and `project.dirty`; outside git, `commit` is null.
 
 ### 3. Interview, briefly
 
@@ -178,9 +192,10 @@ with level, evidence, a one-line why and a repo-specific "Prompt for your agent"
 missing**; **Confirm** with checkboxes; **In place**; **Done early**; **Coming next**;
 the credit footer from `assets/credits.json`; and the machine-state block last.
 
-On a re-run, overwrite the file, keeping `answers` and `confirmations`.
+On a re-run, overwrite the file (after the history copy from step 1), keeping `answers`
+and `confirmations`. `generated_on` is always today's date.
 
-### 7. Render `.readiness/report.html`
+### 7. Render the dated HTML report
 
 Preferred: run the bundled renderer, which needs only Python 3.8+:
 
@@ -189,8 +204,10 @@ python3 <skill-dir>/scripts/render_report.py <project-dir>
 ```
 
 It reads the machine-state block, merges `assets/credits.json`, injects both into
-`assets/report-template.html`, and writes `<project-dir>/.readiness/report.html`. Ask
-before running it if the agent normally asks before running commands.
+`assets/report-template.html`, and writes `<project-dir>/.readiness/report-<generated_on>.html`.
+A second report on the same day becomes `report-<date>-2.html`, and so on; nothing is
+overwritten. It prints the path it wrote. Ask before running it if the agent normally asks
+before running commands.
 
 **No-script fallback** (no Python, or scripts not allowed): do the same by hand.
 
@@ -200,7 +217,8 @@ before running it if the agent normally asks before running commands.
    `assets/credits.json`, and serialise it.
 3. Replace every `</` in the serialised JSON with `<\/` so it can't close the script tag.
 4. Replace `/*READINESS_DATA*/` with it, and write the result to
-   `.readiness/report.html`, creating the folder if needed.
+   `.readiness/report-<generated_on>.html` (with `-2`, `-3` if that file exists), creating
+   the folder if needed.
 
 Then tell the user where both files are. The HTML has no network requests and opens
 offline; suggest opening it in a browser.
@@ -210,7 +228,8 @@ offline; suggest opening it in a browser.
 
 ### 8. Ask about `.gitignore`
 
-If `.readiness/` isn't already ignored, ask once whether to add it to `.gitignore`. Add
+If `.readiness/` isn't already ignored, ask once whether to add it to `.gitignore` (it
+holds the dated reports and the history copies; `readiness-check.md` stays tracked). Add
 it only on a yes. Never touch any other file: no fixes, no config edits, no new
 dependencies, even if a fix is one line. The fix prompts are for the user to hand to
 their agent when they choose.
@@ -241,8 +260,10 @@ questions, not warnings. Regulatory overrides get one "not legal advice" line.
 ## Non-negotiables
 
 - At most 6 interview questions, all with defaults; none repeated across runs.
-- Only `readiness-check.md` and `.readiness/report.html` are written, plus `.gitignore`
-  if the user says yes.
+- Only `readiness-check.md` and files under `.readiness/` are written, plus `.gitignore`
+  if the user says yes. Nothing is ever overwritten except `readiness-check.md`, and only
+  after its history copy.
+- Every report carries its check date, and its commit in a git repo.
 - Every in-scope item appears in the machine state with a status; names match
   `assets/roadmap.json` exactly.
 - The "Do now" list has at most 5 items. If nothing is red, say so and point at Confirm.

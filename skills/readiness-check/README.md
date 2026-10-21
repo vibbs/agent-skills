@@ -12,12 +12,15 @@ the engineer who'd remember it). Overrides pull items forward for AI features, p
 health data, kids as users, and EU or Indian users.
 
 The skill asks at most six short questions, only what the repo can't answer, and
-remembers the answers for next time. It never changes your code. It writes two files:
+remembers the answers for next time. It never changes your code. It writes:
 
 - `readiness-check.md` at the project root: the source of truth, with a machine-readable
   block at the bottom that the next run reuses.
-- `.readiness/report.html`: a one-page visual report with no network requests, in light
-  and dark mode.
+- `.readiness/report-<date>.html`: a one-page visual report with no network requests, in
+  light and dark mode. Each run gets its own dated file, and the previous
+  `readiness-check.md` is kept under `.readiness/history/`, so nothing is lost on a re-run.
+
+Every report shows the date it was checked and, in a git repo, the commit.
 
 Every finding cites evidence (`file:line` or a config file). Things that live outside
 the repo, such as backups, uptime alerts and DNS, are marked "confirm", never "missing".
@@ -56,7 +59,7 @@ Runs only when the agent or you invoke it. Nothing runs on install.
 
 | Script | What it does | Needs |
 |---|---|---|
-| `scripts/render_report.py` | Reads the machine-state block from `readiness-check.md`, adds the credit values from `assets/credits.json`, fills the data slot in `assets/report-template.html`, and writes `.readiness/report.html`. Writes nothing else. | Python 3.8+, standard library only |
+| `scripts/render_report.py` | Reads the machine-state block from `readiness-check.md`, adds the credit values from `assets/credits.json`, fills the data slot in `assets/report-template.html`, and writes `.readiness/report-<date>.html` (adding `-2`, `-3` for a second report the same day, never overwriting). Writes nothing else. | Python 3.8+, standard library only |
 
 Without Python, the agent can do the same by hand: the template has one marked data slot
 to replace with the JSON.

@@ -100,7 +100,9 @@ Roadmap based on a list of 111 production topics by {{ORIGINAL_POST_HANDLE}} (ht
       "PostgreSQL (pg)",
       "Docker",
       "Helm / Kubernetes"
-    ]
+    ],
+    "commit": null,
+    "dirty": false
   },
   "answers": {
     "audience": "about_to_launch",

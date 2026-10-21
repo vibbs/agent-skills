@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Render .readiness/report.html from readiness-check.md.
+"""Render a dated HTML report from readiness-check.md.
 
 Reads the JSON block under "## Machine state, don't edit by hand" in
 <project>/readiness-check.md, adds the credit values from assets/credits.json,
 injects both into assets/report-template.html, and writes
-<project>/.readiness/report.html. The output is one self-contained file with no
-network requests.
+<project>/.readiness/report-<generated_on>.html. A second report on the same day
+gets a -2, -3 ... suffix, so earlier reports are never overwritten. The output is
+one self-contained file with no network requests.
 
 Python 3.8+, standard library only. Writes nothing else.
 
@@ -24,7 +25,8 @@ TEMPLATE = SKILL_DIR / "assets" / "report-template.html"
 CREDITS = SKILL_DIR / "assets" / "credits.json"
 HEADING = "## Machine state, don't edit by hand"
 SLOT = "/*READINESS_DATA*/"
-REQUIRED = ("schema", "project", "phase", "counts", "items")
+REQUIRED = ("schema", "generated_on", "project", "phase", "counts", "items")
+DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def fail(msg: str) -> None:
@@ -51,10 +53,22 @@ def read_state(report: Path) -> dict:
     return state
 
 
+def next_free(folder: Path, date: str) -> Path:
+    """report-<date>.html, or report-<date>-2.html and so on if that exists."""
+    if not DATE.match(str(date)):
+        fail(f"generated_on must be YYYY-MM-DD, got {date!r}")
+    out = folder / f"report-{date}.html"
+    n = 2
+    while out.exists():
+        out = folder / f"report-{date}-{n}.html"
+        n += 1
+    return out
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Render .readiness/report.html from readiness-check.md.")
+    ap = argparse.ArgumentParser(description="Render a dated HTML report from readiness-check.md.")
     ap.add_argument("project", nargs="?", default=".", help="project root (default: current directory)")
-    ap.add_argument("--out", help="output file (default: <project>/.readiness/report.html)")
+    ap.add_argument("--out", help="output file (default: <project>/.readiness/report-<date>.html)")
     args = ap.parse_args()
 
     project = Path(args.project).resolve()
@@ -69,7 +83,7 @@ def main() -> int:
     data = json.dumps(state, ensure_ascii=False).replace("<", "\\u003c")
     html = template.replace(SLOT, data)
 
-    out = Path(args.out).resolve() if args.out else project / ".readiness" / "report.html"
+    out = Path(args.out).resolve() if args.out else next_free(project / ".readiness", state["generated_on"])
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     print(f"wrote {out}")

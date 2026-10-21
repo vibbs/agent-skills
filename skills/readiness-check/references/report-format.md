@@ -39,7 +39,7 @@ one line ("Nothing red. Nice."), except Done early, which is left out when empty
 ````markdown
 # Readiness check: <project name>
 
-<YYYY-MM-DD> · **P2 Pre-launch** · You're here because <answers + one piece of repo evidence>.
+<YYYY-MM-DD> · commit <short hash>[ + uncommitted changes] · **P2 Pre-launch** · You're here because <answers + one piece of repo evidence>.
 
 Overrides: **AI features** (calls OpenAI from app/api/chat/route.ts) · **EU users** (you said you have EU users)
 <card extra lines, if any> · Not legal advice. <only when a regulatory override applies>
@@ -127,7 +127,9 @@ One fenced `json` block, the last thing in the file, under the exact heading
   "generated_on": "2026-10-21",
   "project": {
     "name": "acme-chat",
-    "stack": ["Next.js 14", "TypeScript", "Supabase", "OpenAI SDK", "Vercel"]
+    "stack": ["Next.js 14", "TypeScript", "Supabase", "OpenAI SDK", "Vercel"],
+    "commit": "a1b2c3d",
+    "dirty": false
   },
   "answers": {
     "audience": "about_to_launch",
@@ -212,6 +214,10 @@ Field rules:
   `amber` has either `evidence` or a `confirm` line saying what to check. Every `na` has
   `evidence` giving the reason ("single-tenant (you said so)", "no webhook routes").
 - `check` is `repo`, `confirm` or `repo+confirm`, from the item catalog.
+- `generated_on` is today's date as `YYYY-MM-DD`. The renderer names the HTML after it.
+- `project.commit` is the short commit hash the scan read, or null outside git;
+  `project.dirty` is true when there were uncommitted changes. Leave out the commit part
+  of the header line when `commit` is null.
 - `do_now` lists at most 5 names, in display order.
 - `legal_note` is `true` when any regulatory override applies (all except AI features).
 - `confirmations` survives between runs. Never drop an entry unless the user withdraws it.

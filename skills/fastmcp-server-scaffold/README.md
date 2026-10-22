@@ -19,7 +19,8 @@ capability wave at a time.
 
 ```
 $ python3 scripts/scaffold.py --out ../acme-tickets --name acme-tickets --auth proxy
-Wrote 73 files to ../acme-tickets
+Wrote 74 files to ../acme-tickets
+  template 1.0.0 generated 2026-10-22; options recorded in .scaffold.json
   auth=proxy transport=stdio+http with=-
 
 $ cd ../acme-tickets && uv lock && uv sync --extra dev && uv run pytest -q
@@ -46,7 +47,11 @@ $ cd ../acme-tickets && uv lock && uv sync --extra dev && uv run pytest -q
 
 | Script | What it does |
 |---|---|
-| `scripts/scaffold.py` | Renders `assets/template/` into a new directory. Standard library only; refuses a non-empty target; writes nothing outside `--out`. `--dry-run` lists files first, `--list-features` shows the opt-ins. |
+| `scripts/scaffold.py` | Renders `assets/template/` into a new directory. Standard library only; refuses a non-empty target; writes nothing outside `--out`. `--dry-run` lists files first, `--list-features` shows the opt-ins. Writes `.scaffold.json` (template version, date, FastMCP pin, options) and dates the first CHANGELOG entry. |
+
+The template version is `version` in `assets/manifest.json`; bump it whenever
+`assets/template/` or the rendering changes, so a project's `.scaffold.json` says which
+template it came from.
 
 The generated project contains its own scripts (sign-in, login verification, version
 bump), documented in its `AGENTS.md`. None run unless you run them.

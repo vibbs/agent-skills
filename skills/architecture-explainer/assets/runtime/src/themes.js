@@ -16,7 +16,7 @@ export const THEMES = [
   {
     id: "house",
     metrics: { charFactor: 0.505 },
-    name: "BlockSimplified",
+    name: "House",
     blurb:
       "Editorial prose on warm paper; the figure sits on it as a hard-edged monochrome plate. Colour appears only when a lens asks for it.",
     font: { ui: `Archivo, ${SANS}`, prose: `Newsreader, Georgia, serif`, mono: `Archivo, ${SANS}` },

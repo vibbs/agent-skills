@@ -11,8 +11,8 @@ export const SPEC = {
     title: "How an LLM Evaluation Pipeline Actually Works",
     subtitle:
       "A new model candidate lands on Monday. By Friday you either ship it or you don't. This is the machinery that makes that call.",
-    author: "BlockSimplified",
-    updated: "July 2026",
+    author: "Jane Doe",
+    updated: "2026-07-14",
   },
 
   // ── WHO IS READING ────────────────────────────────────────────────────────

@@ -78,6 +78,11 @@ for (const era of SPEC.eras) {
   }
 }
 
+// meta: every explainer carries a title and a date, so a reader can tell how old it is
+if (!SPEC.meta || !SPEC.meta.title) err("meta.title missing — it becomes the page and tab title");
+if (!SPEC.meta || !SPEC.meta.updated)
+  err('meta.updated missing — every explainer must say when it was last true (e.g. "2026-07-14")');
+
 // beats
 if (!SPEC.beats || !SPEC.beats.length)
   err("no beats — a diagram without a guided tour is not finished");
@@ -107,7 +112,7 @@ if (leaves > MAX_LEAVES)
 
 // report
 const pad = (s) => "  " + s;
-console.log(`\nspec: ${SPEC.meta.title}`);
+console.log(`\nspec: ${SPEC.meta?.title}`);
 console.log(`  ${all.size} nodes (${leaves} leaves) · ${SPEC.edges.length} edges · ${SPEC.beats.length} beats`);
 console.log(`  ${SPEC.personas.length} personas · ${SPEC.lenses.length} lenses · ${SPEC.eras.length} eras`);
 const combos = SPEC.personas.length * SPEC.lenses.length * SPEC.eras.length;

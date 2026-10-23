@@ -270,4 +270,4 @@ questions, not warnings. Regulatory overrides get one "not legal advice" line.
   `assets/roadmap.json` exactly.
 - The "Do now" list has at most 5 items. If nothing is red, say so and point at Confirm.
 - The credit footer is always present. If `assets/credits.json` still holds a
-  `{{PLACEHOLDER}}`, print it as is; never invent a handle or a URL.
+  `{{PLACEHOLDER}}`, print it as is; never invent a URL.

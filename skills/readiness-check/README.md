@@ -69,5 +69,6 @@ to replace with the JSON.
 
 The roadmap is based on a list of 111 production topics from a public post
 (https://www.instagram.com/p/DehMUh_jdbK/), sorted into phases and levels for the
-BlockSimplified Vibecoder Production Roadmap. Not legal advice: the regulatory overrides
-say which engineering items to bring forward, not what a law requires.
+[BlockSimplified Vibecoder Production Roadmap](https://www.blocksimplified.com/blog/vibe-to-prod-what-your-project-needs-for-production).
+Not legal advice: the regulatory overrides say which engineering items to bring forward,
+not what a law requires.

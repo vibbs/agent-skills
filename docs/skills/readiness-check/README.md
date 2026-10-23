@@ -92,9 +92,10 @@ it, the agent fills the report template by hand.
 
 The roadmap is based on a list of 111 production topics that vibecoders tend to forget,
 from a [public post](https://www.instagram.com/p/DehMUh_jdbK/), sorted into phases,
-levels and overrides for the BlockSimplified Vibecoder Production Roadmap. The idea of a
-senior-engineer skill that reviews and recommends was inspired by the review commands in
-[Ponytail](https://github.com/DietrichGebert/ponytail).
+levels and overrides for the
+[BlockSimplified Vibecoder Production Roadmap](https://www.blocksimplified.com/blog/vibe-to-prod-what-your-project-needs-for-production).
+The idea of a senior-engineer skill that reviews and recommends was inspired by the
+review commands in [Ponytail](https://github.com/DietrichGebert/ponytail).
 
 The regulatory overrides say which engineering items to bring forward. They are not legal
 advice.

@@ -554,11 +554,10 @@ footer p + p { margin-top: 6px; }
     select(reds.length ? "red" : ambers.length ? "amber" : "green");
 
     // Footer
-    var handle = isPlaceholder(credits.ORIGINAL_POST_HANDLE) ? (credits.ORIGINAL_POST_HANDLE || "the original author") : credits.ORIGINAL_POST_HANDLE;
     var postUrl = credits.ORIGINAL_POST_URL;
     var roadmapUrl = credits.BLOCKSIMPLIFIED_ROADMAP_URL;
     app.appendChild(h("footer", null,
-      h("p", null, "Roadmap based on a list of 111 production topics by " + handle,
+      h("p", null, "Roadmap based on a list of 111 production topics",
         postUrl ? [" (", h("a", { href: postUrl, rel: "noopener noreferrer", text: "original post" }), ")"] : null,
         " · Full roadmap: ",
         isPlaceholder(roadmapUrl) ? (roadmapUrl || "") : h("a", { href: roadmapUrl, rel: "noopener noreferrer", text: "BlockSimplified" })),

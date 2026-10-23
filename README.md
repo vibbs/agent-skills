@@ -105,9 +105,9 @@ Previews and longer write-ups are in the [catalog](docs/catalog.md).
 | <a href="docs/skills/readiness-check/"><img src="docs/skills/readiness-check/media/preview.png" width="240" alt="readiness-check preview"></a> | [`readiness-check`](docs/skills/readiness-check/) | Review a project's production readiness by phase: work out whether it's in project setup, pre-launch, growth or scale, check what the current phase needs, and say what to skip for now. | Use when the user asks 'is this ready to launch?', 'what am I missing before going live?', 'production readiness check', 'review my app for production', 'what should I add next?', or is about to ship a vibe-coded or AI-built app to real users. |
 <!-- catalog:end -->
 
-The `readiness-check` skill reviews projects against the BlockSimplified Vibecoder
-Production Roadmap, which sorts a public list of 111 production topics into phases and
-levels.
+The `readiness-check` skill reviews projects against the
+[BlockSimplified Vibecoder Production Roadmap](https://www.blocksimplified.com/blog/vibe-to-prod-what-your-project-needs-for-production),
+which sorts a public list of 111 production topics into phases and levels.
 
 ## Compatibility
 

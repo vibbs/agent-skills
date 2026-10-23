@@ -73,7 +73,7 @@ Skip for now: Kubernetes, Caching, Message Queues, Sharding, Multi-Region Deploy
 
 ---
 
-Roadmap based on a list of 111 production topics by {{ORIGINAL_POST_HANDLE}} (https://www.instagram.com/p/DehMUh_jdbK/) · Full roadmap: {{BLOCKSIMPLIFIED_ROADMAP_URL}}
+Roadmap based on a list of 111 production topics (https://www.instagram.com/p/DehMUh_jdbK/) · Full roadmap: https://www.blocksimplified.com/blog/vibe-to-prod-what-your-project-needs-for-production
 
 ## Machine state, don't edit by hand
 

@@ -90,7 +90,7 @@ Skip for now: Kubernetes, Caching, Message Queues, Sharding, Multi-Region Deploy
 
 ---
 
-Roadmap based on a list of 111 production topics by <ORIGINAL_POST_HANDLE> (<ORIGINAL_POST_URL>) · Full roadmap: <BLOCKSIMPLIFIED_ROADMAP_URL>
+Roadmap based on a list of 111 production topics (<ORIGINAL_POST_URL>) · Full roadmap: <BLOCKSIMPLIFIED_ROADMAP_URL>
 
 ## Machine state, don't edit by hand
 
@@ -109,8 +109,8 @@ Notes on the layout:
   OpenAI client, `lib/openai.ts:4`", or "no backup config found in repo or infra files".
 - **The prompt** must name real files, routes and clients from this repo. One paragraph,
   ready to paste.
-- **Credit footer:** take the three values from `assets/credits.json`. If a value is
-  still a `{{PLACEHOLDER}}`, print it as is; never invent a handle or URL.
+- **Credit footer:** take the two values from `assets/credits.json`. If a value is
+  still a `{{PLACEHOLDER}}`, print it as is; never invent a URL.
 - **Confirm checkboxes:** on the next run, a ticked `- [x]` line moves that item into
   `confirmations` with today's date, and it turns green with evidence "confirmed by you
   on <date>".

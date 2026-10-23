@@ -425,7 +425,7 @@ footer p + p { margin-top: 6px; }
           return h("li", { class: "chip override", title: o.reason }, icon("shield"), h("span", null, h("strong", { text: o.key }), " · " + o.reason));
         })),
         h("ul", { class: "small-list" },
-          ov.map(function (o) { return h("li", { text: o.key + ": " + o.extra }); }),
+          ov.filter(function (o) { return o.extra; }).map(function (o) { return h("li", { text: o.key + ": " + o.extra }); }),
           d.legal_note ? h("li", { text: "Not legal advice." }) : null)));
     }
 
@@ -558,7 +558,7 @@ footer p + p { margin-top: 6px; }
     var roadmapUrl = credits.BLOCKSIMPLIFIED_ROADMAP_URL;
     app.appendChild(h("footer", null,
       h("p", null, "Roadmap based on a list of 111 production topics",
-        postUrl ? [" (", h("a", { href: postUrl, rel: "noopener noreferrer", text: "original post" }), ")"] : null,
+        !postUrl ? null : isPlaceholder(postUrl) ? " (" + postUrl + ")" : [" (", h("a", { href: postUrl, rel: "noopener noreferrer", text: "original post" }), ")"],
         " · Full roadmap: ",
         isPlaceholder(roadmapUrl) ? (roadmapUrl || "") : h("a", { href: roadmapUrl, rel: "noopener noreferrer", text: "BlockSimplified" })),
       h("p", { text: "Generated on " + when + " from readiness-check.md (schema " + d.schema + ", skill " + d.skill_version + "). That file is the source of truth; findings reflect the code as it was on that date." })));

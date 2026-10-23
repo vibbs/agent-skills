@@ -71,7 +71,8 @@ prescription → `health`. Nothing found → `none`.
 - `india`
 - `us`
 - `elsewhere`: name the countries. Stored as ISO country codes under `countries`
-  (`["GB", "BR"]`).
+  (`["GB", "BR"]`). Include `US` here if a US state privacy law such as CCPA/CPRA applies
+  to you; `us` on its own pulls nothing.
 - `global`: anywhere, a public launch to everyone, or not sure.
 
 Default: `global`, unless the repo shows locales, currencies or hosting regions that

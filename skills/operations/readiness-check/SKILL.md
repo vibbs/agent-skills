@@ -98,7 +98,10 @@ don't overwrite the user's notes without mentioning it.
 
 Before this run overwrites it, copy the existing `readiness-check.md` to
 `.readiness/history/readiness-check-<its generated_on>.md` (add `-2`, `-3` if that name
-is taken). Earlier runs are never lost.
+is taken). If there's no valid `generated_on` (the block is missing or invalid, or the
+field isn't a `YYYY-MM-DD` date), name the copy after the file's last-modified date
+instead, with the same `-2`, `-3` rule. Copy it in every case, whatever its state.
+Earlier runs are never lost.
 
 ### 2. Scan the repo
 
@@ -208,7 +211,8 @@ python3 <skill-dir>/scripts/render_report.py <project-dir>
 It reads the machine-state block, merges `assets/credits.json`, injects both into
 `assets/report-template.html`, and writes `<project-dir>/.readiness/report-<generated_on>.html`.
 A second report on the same day becomes `report-<date>-2.html`, and so on; nothing is
-overwritten. It prints the path it wrote. Ask before running it if the agent normally asks
+overwritten. `--out <file>` writes somewhere else instead, and fails if that file
+already exists. It prints the path it wrote. Ask before running it if the agent normally asks
 before running commands.
 
 **No-script fallback** (no Python, or scripts not allowed): do the same by hand.
@@ -217,7 +221,8 @@ before running commands.
    `<script type="application/json" id="readiness-data">/*READINESS_DATA*/</script>`.
 2. Take the machine-state JSON, add a `"credits"` key holding the object from
    `assets/credits.json`, and serialise it.
-3. Replace every `</` in the serialised JSON with `<\/` so it can't close the script tag.
+3. Replace every `<` in the serialised JSON with `\u003c` (the same escape the script
+   uses), so nothing in the data can close the script tag or open a comment.
 4. Replace `/*READINESS_DATA*/` with it, and write the result to
    `.readiness/report-<generated_on>.html` (with `-2`, `-3` if that file exists), creating
    the folder if needed.
@@ -225,8 +230,8 @@ before running commands.
 Then tell the user where both files are. The HTML has no network requests and opens
 offline; suggest opening it in a browser.
 
-> **Claude Code / Claude apps only.** Also send the HTML with `SendUserFile` so it shows
-> inline. Generic alternative: give the path.
+If the agent can attach files to the conversation, also attach the HTML so it shows
+inline; otherwise the path is enough.
 
 ### 8. Ask about `.gitignore`
 

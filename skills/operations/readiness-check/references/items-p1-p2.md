@@ -1,7 +1,7 @@
 # Items: P1, P2 and override pulls
 
 The catalog of every item the review checks in depth: all 15 P1 items, all 29 P2 items,
-and the 5 later-phase items an override can pull into P2. Read this file in full before
+and the 6 later-phase items an override can pull into P2. Read this file in full before
 classifying anything (workflow step 5). Names match `assets/roadmap.json` exactly; use
 them as the item keys in the machine state.
 
@@ -21,9 +21,13 @@ Fix prompt: template for the "Prompt for your agent" line
   2 = availability and recovery; 3 = hygiene and speed.
 - **repo**: can be judged from files. **confirm**: lives outside the repo (hosting
   console, DNS provider, cloud account); amber until the user confirms it, never red on
-  absence of evidence alone. **repo + confirm**: repo evidence can make it green, but
-  its absence only makes it amber, because the host may do it.
-- **Applies.** Three conditions come from `roadmap.json` (`multi-tenant apps`,
+  absence of evidence alone. **repo + confirm**: repo evidence can make it green; when
+  the repo shows nothing, the default is amber, because the host may do it. An item's
+  own Status line always wins over this default: when it names a red the repo can show,
+  the item is red. Some of those reds are about something missing from the code (GDPR &
+  Privacy: no way to delete an account; LLM Token Budgets: no limits on an endpoint
+  anyone can call), because the host can't supply them.
+- **Applies.** Two conditions come from `roadmap.json` (`multi-tenant apps`,
   `AI features`). The rest marked *(derived)* are feature checks this skill adds: the
   roadmap notes say these items matter "if you build that feature". When a derived
   condition is false, the status is n/a with a short reason ("no webhooks received").

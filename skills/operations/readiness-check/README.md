@@ -60,7 +60,7 @@ Runs only when the agent or you invoke it. Nothing runs on install.
 
 | Script | What it does | Needs |
 |---|---|---|
-| `scripts/render_report.py` | Reads the machine-state block from `readiness-check.md`, adds the credit values from `assets/credits.json`, fills the data slot in `assets/report-template.html`, and writes `.readiness/report-<date>.html` (adding `-2`, `-3` for a second report the same day, never overwriting). Writes nothing else. | Python 3.8+, standard library only |
+| `scripts/render_report.py` | Reads the machine-state block from `readiness-check.md`, adds the credit values from `assets/credits.json`, fills the data slot in `assets/report-template.html`, and writes `.readiness/report-<date>.html` (adding `-2`, `-3` for a second report the same day, never overwriting). `--out <file>` picks another path and fails if that file exists. Writes nothing else. | Python 3.8+, standard library only |
 
 Without Python, the agent can do the same by hand: the template has one marked data slot
 to replace with the JSON.

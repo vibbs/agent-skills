@@ -5,8 +5,9 @@ Reads the JSON block under "## Machine state, don't edit by hand" in
 <project>/readiness-check.md, adds the credit values from assets/credits.json,
 injects both into assets/report-template.html, and writes
 <project>/.readiness/report-<generated_on>.html. A second report on the same day
-gets a -2, -3 ... suffix, so earlier reports are never overwritten. The output is
-one self-contained file with no network requests.
+gets a -2, -3 ... suffix, so earlier reports are never overwritten. With --out, the
+report goes to that file instead, and the script fails rather than overwrite an
+existing one. The output is one self-contained file with no network requests.
 
 Python 3.8+, standard library only. Writes nothing else.
 
@@ -68,7 +69,7 @@ def next_free(folder: Path, date: str) -> Path:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Render a dated HTML report from readiness-check.md.")
     ap.add_argument("project", nargs="?", default=".", help="project root (default: current directory)")
-    ap.add_argument("--out", help="output file (default: <project>/.readiness/report-<date>.html)")
+    ap.add_argument("--out", help="output file; must not exist yet (default: <project>/.readiness/report-<date>.html)")
     args = ap.parse_args()
 
     project = Path(args.project).resolve()
@@ -83,9 +84,18 @@ def main() -> int:
     data = json.dumps(state, ensure_ascii=False).replace("<", "\\u003c")
     html = template.replace(SLOT, data)
 
-    out = Path(args.out).resolve() if args.out else next_free(project / ".readiness", state["generated_on"])
+    if args.out:
+        out = Path(args.out).resolve()
+        if out.exists():
+            fail(f"{out} already exists; reports are never overwritten. Pick a new --out path or leave it out")
+    else:
+        out = next_free(project / ".readiness", state["generated_on"])
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(html, encoding="utf-8")
+    try:
+        with out.open("x", encoding="utf-8") as f:
+            f.write(html)
+    except FileExistsError:
+        fail(f"{out} appeared while rendering; nothing was overwritten. Run again")
     print(f"wrote {out}")
     return 0
 

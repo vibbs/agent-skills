@@ -17,7 +17,9 @@ Read this file at workflow step 6, before writing the report.
   (1, then 2, then 3, from `references/items-p1-p2.md`), then by the item's order in
   `assets/roadmap.json`.
 - **Also missing:** the remaining red items in the same order.
-- **Confirm:** amber items, confirm-only ones first, then the rest in the same order.
+- **Confirm:** amber items, confirm-only ones first, then the rest; each group in
+  roadmap order (the order of `items` in the machine state: P1 and P2 items as in
+  `assets/roadmap.json`, then pulled items). Not sorted by level or risk.
 - **In place:** green items in roadmap order.
 - **Coming next:** the next phase's L1 items first, then L2, up to 5, then "and N more".
   Leave out items already green or flagged done early. For a P1 project the next phase is
@@ -33,16 +35,26 @@ Read this file at workflow step 6, before writing the report.
 
 ## Structure
 
-Copy this layout exactly. Sections with nothing in them keep their heading and say so in
-one line ("Nothing red. Nice."), except Done early, which is left out when empty.
+This is the layout of `readiness-check.md`, the markdown file. Copy it exactly, wording
+included. The HTML report has its own layout in `assets/report-template.html` and is
+built from the machine state only, so its wording can differ; don't copy it into the
+markdown. The reports in `tests/readiness-check/expected/` follow this layout.
+
+Sections with nothing in them keep their heading and say so in one line: Do now
+"Nothing red. Nice. Have a look at Confirm below.", Also missing "Nothing else is red.",
+Confirm "Nothing to confirm.", In place "Nothing yet. That's normal this early." Done
+early is left out when empty.
 
 ````markdown
 # Readiness check: <project name>
 
-<YYYY-MM-DD> · commit <short hash>[ + uncommitted changes] · **P2 Pre-launch** · You're here because <answers + one piece of repo evidence>.
+<YYYY-MM-DD> · commit <short hash>[ + uncommitted changes] · **P2 Pre-launch** · You're here because <answers + one piece of repo evidence>.[ Using your answers from <answered_on>, so no questions this time.]
 
-Overrides: **AI features** (calls OpenAI from app/api/chat/route.ts) · **EU users** (you said you have EU users)
-<card extra lines, if any> · Not legal advice. <only when a regulatory override applies>
+Overrides: **AI features** (calls OpenAI from app/api/chat/route.ts) · **EU users** (you said you have users in the EU)
+
+- AI features: <the card's extra line>
+- EU users: <the card's extra line>
+- Not legal advice. <only when a regulatory override applies>
 
 <P3+ only: "This version checks the P1–P2 baseline and previews the next phase; deeper P3 and P4 review comes in a later version.">
 
@@ -53,7 +65,7 @@ Overrides: **AI features** (calls OpenAI from app/api/chat/route.ts) · **EU use
 ## Do now
 
 ### 1. Secrets Management · L1
-Evidence: `NEXT_PUBLIC_OPENAI_API_KEY` used in a client component, `components/Chat.tsx:8`
+Evidence: NEXT_PUBLIC_OPENAI_API_KEY used in a client component, components/Chat.tsx:8
 Why: Keys live in env vars or a secret store, never in git or frontend code.
 Prompt for your agent:
 > Move the OpenAI key server-side: rename NEXT_PUBLIC_OPENAI_API_KEY to OPENAI_API_KEY, create the client only in app/api/chat/route.ts, call that route from components/Chat.tsx, and remind me to rotate the old key.
@@ -62,31 +74,31 @@ Prompt for your agent:
 
 ## Also missing
 
-- **Database Indexing** · L2 · no index on `messages.user_id`, used in `lib/db.ts:22`
+- **Database Indexing** · L2 · no index on messages.user_id, used in lib/db.ts:22 Prompt: Add a migration that indexes messages (user_id, created_at), matching the query in lib/db.ts:22.
 
 ## Confirm
 
-These live outside the repo, so the check can't see them. Tick the box once you've
-checked, and the next run will count it as in place.
+These are partly done, or live outside the repo where the check can't see them.
+Tick a box once you've checked, and the next run will count it as in place.
 
-- [ ] **Backups** · Check automated backups or point-in-time recovery is on in Supabase, then restore one to a scratch project.
+- [ ] **Backups** · Check automated backups or point-in-time recovery is on in Supabase, then restore one to a scratch project. (no backup config found in repo; Supabase handles this per plan)
 - [ ] **Alerts** · An uptime check hits /api/health every few minutes and alerts you.
 
 ## In place
 
-- **Project Scaffolding** · `eslint.config.mjs`, `.prettierrc`
-- **TLS** · provided by Vercel (`vercel.json`)
+- **Project Scaffolding** · eslint.config.mjs and .prettierrc
+- **TLS** · provided by Vercel (vercel.json)
 
 ## Done early
 
-- **Helm Charts** (P4) · `deploy/helm/Chart.yaml` · Kubernetes is usually a P4 budget decision. Is someone keeping these current, or would your host's own deploy be simpler for now?
+- **Helm Charts** (P4) · deploy/helm/Chart.yaml · Kubernetes is usually a P4 budget decision. Is someone keeping these current, or would your host's own deploy be simpler for now?
 
 ## Coming next: P3 Growth
 
 Starts with real traffic, paying users or a second engineer.
 First up: Production Incidents, Vertical Scaling, Latency, Throughput, Metrics, and 32 more.
 
-Skip for now: Kubernetes, Caching, Message Queues, Sharding, Multi-Region Deployment. These are not needed in P2; 77 items in total can wait.
+Skip for now: Kubernetes, Caching, Message Queues, Sharding, Multi-Region Deployment. None of these are needed in P2; 77 items in total can wait.
 
 ---
 
@@ -101,12 +113,27 @@ Roadmap based on a list of 111 production topics (<ORIGINAL_POST_URL>) · Full r
 
 Notes on the layout:
 
+- **Overrides line.** Each applied override in card order (as in `assets/roadmap.json`),
+  bold, with its reason in brackets, joined with " · ". Then a blank line and one bullet
+  per applied override with its `extra` line, always, followed by a "Not legal advice."
+  bullet when `legal_note` is true. With no overrides the line reads
+  "Overrides: none apply." and there are no bullets.
+- **Header line.** Add "Using your answers from <answered_on>, so no questions this
+  time." when every answer was stored and no question was asked.
+- **Also missing** lines: `- **<name>** · <level> · <evidence> Prompt: <prompt>`, on one
+  line.
+- **Confirm** lines: `- [ ] **<name>** · <confirm line>`, then the evidence in brackets
+  when the item has any.
+- **In place** lines: `- **<name>** · <evidence>`.
+- **Done early** lines: `- **<name>** (<phase>) · <evidence> · <question>`.
+- Evidence, prompts and confirm lines are printed as plain text, as stored in the machine
+  state, without added backticks.
 - **Counts table.** "Do now" counts every red item (not just the top 5). "Not yet" counts
   every roadmap item in a later phase that wasn't pulled forward. n/a items are not
   counted anywhere.
 - **Evidence** is always a `file:line`, a config file name, or "confirmed by you on
   <date>". For red items, say what was looked for and where: "no timeout passed to the
-  OpenAI client, `lib/openai.ts:4`", or "no backup config found in repo or infra files".
+  OpenAI client, lib/openai.ts:4", or "no backup config found in repo or infra files".
 - **The prompt** must name real files, routes and clients from this repo. One paragraph,
   ready to paste.
 - **Credit footer:** take the two values from `assets/credits.json`. If a value is

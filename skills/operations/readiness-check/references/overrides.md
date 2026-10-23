@@ -23,8 +23,9 @@ JSON wins.
 - An item pulled by several overrides is reviewed once; list every override that pulled it.
 - Each applied override gets a one-line reason in the report, for example "AI features:
   the app calls OpenAI from app/api/chat/route.ts."
-- Show the card's `extra` line once, under the override list, when it adds an action
-  the item list doesn't cover (for example, signing BAAs).
+- Show each applied card's `extra` line once, as a bullet under the override list, always
+  (it carries the action or date the item list doesn't, such as signing BAAs). The exact
+  layout is in `references/report-format.md`.
 
 ## Region answers → cards
 
@@ -36,7 +37,7 @@ ask for the same work, so one card covers many of them. Map the `regions` answer
 |---|---|
 | `eu` (EU or EEA) | EU users |
 | `india` | Indian users |
-| `us` | none by default. US state privacy laws (California's CCPA/CPRA and others) apply above size or data-volume thresholds; apply Privacy-law regions only if the user says one applies to them. |
+| `us` | none. US state privacy laws (California's CCPA/CPRA and others) apply only above size or data-volume thresholds, so `us` alone pulls no card. A user who knows one applies to them answers `elsewhere` with `US` (the Q5 option says so), which applies Privacy-law regions. |
 | `elsewhere` + countries | Privacy-law regions for a country with a comprehensive privacy law (UK, Switzerland, Brazil, Canada, Japan, South Korea, Australia and many more); Data-localisation regions for China or Russia. If you're not sure whether a country has such a law, apply Privacy-law regions: the work it pulls is worth doing anyway. |
 | `global` (anywhere, or not sure) | EU users, Indian users and Privacy-law regions. Not Data-localisation regions unless the user confirms they serve China, Russia or another country that requires it. |
 

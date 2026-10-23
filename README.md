@@ -76,7 +76,7 @@ plugin instructions above), custom skills are installed by uploading a ZIP. Pack
 skill folder itself, so the ZIP's root is the folder, not the repository:
 
 ```bash
-cd skills && zip -r ../architecture-explainer.zip architecture-explainer
+cd skills/docs && zip -r ../../architecture-explainer.zip architecture-explainer
 ```
 
 Then, in Claude, open Customize > Skills (Settings > Capabilities in some versions), click
@@ -90,19 +90,41 @@ anything a skill installs or downloads depends on that sandbox's network access.
 
 ### Manual
 
-Copy a folder from `skills/` into your agent's skills directory (for example
+Copy a skill folder from `skills/<bucket>/` into your agent's skills directory (for example
 `.claude/skills/` or `.agents/skills/`). Per-agent manual instructions are untested.
 
 ## Skills
 
-Previews and longer write-ups are in the [catalog](docs/catalog.md).
+Skills are grouped into buckets under `skills/`: `operations/`, `mcp/` and `docs/`. The
+plugin and `npx skills add` install every bucket; buckets only organise the repository,
+so skill names and install commands don't change. Beta skills live in
+`skills/in-progress/`, which the plugin leaves out; install those by name. Previews and
+longer write-ups are in the [catalog](docs/catalog.md).
 
 <!-- catalog:begin -->
+### Operations
+
+Skills for running a project in production: knowing what it needs before it ships and as it grows.
+
+| Preview | Skill | Description | When it triggers |
+|---|---|---|---|
+| <a href="docs/skills/readiness-check/"><img src="docs/skills/readiness-check/media/preview.png" width="240" alt="readiness-check preview"></a> | [`readiness-check`](docs/skills/readiness-check/) | Review a project's production readiness by phase: work out whether it's in project setup, pre-launch, growth or scale, check what the current phase needs, and say what to skip for now. | Use when the user asks 'is this ready to launch?', 'what am I missing before going live?', 'production readiness check', 'review my app for production', 'what should I add next?', or is about to ship a vibe-coded or AI-built app to real users. |
+
+### MCP
+
+Skills for building Model Context Protocol servers and connectors.
+
+| Preview | Skill | Description | When it triggers |
+|---|---|---|---|
+| <a href="docs/skills/fastmcp-server-scaffold/"><img src="docs/skills/fastmcp-server-scaffold/media/preview.png" width="240" alt="fastmcp-server-scaffold preview"></a> | [`fastmcp-server-scaffold`](docs/skills/fastmcp-server-scaffold/) | Scaffold a production-shaped Python MCP server on FastMCP that fronts an authenticated REST API on behalf of the signed-in user. | Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth. |
+
+### Docs
+
+Skills for explaining a system to the people who need to understand it.
+
 | Preview | Skill | Description | When it triggers |
 |---|---|---|---|
 | <a href="docs/skills/architecture-explainer/"><img src="docs/skills/architecture-explainer/media/preview.png" width="240" alt="architecture-explainer preview"></a> | [`architecture-explainer`](docs/skills/architecture-explainer/) | Build an interactive, self-contained HTML architecture explainer. | Use whenever the user wants to visualize or explain a system: "how does X work", "diagram our architecture", "system overview", "component map", "explain this pipeline", "make a diagram for the blog / for a client / for the docs", HLD or LLD, data flow, or turning a codebase or design doc into something a reader can explore. |
-| <a href="docs/skills/fastmcp-server-scaffold/"><img src="docs/skills/fastmcp-server-scaffold/media/preview.png" width="240" alt="fastmcp-server-scaffold preview"></a> | [`fastmcp-server-scaffold`](docs/skills/fastmcp-server-scaffold/) | Scaffold a production-shaped Python MCP server on FastMCP that fronts an authenticated REST API on behalf of the signed-in user. | Use when the user wants to create, start or bootstrap an MCP server in Python or FastMCP, wrap an API as MCP tools, build an MCP connector for Claude, Cursor, VS Code or Codex, or set up a new MCP project with auth. |
-| <a href="docs/skills/readiness-check/"><img src="docs/skills/readiness-check/media/preview.png" width="240" alt="readiness-check preview"></a> | [`readiness-check`](docs/skills/readiness-check/) | Review a project's production readiness by phase: work out whether it's in project setup, pre-launch, growth or scale, check what the current phase needs, and say what to skip for now. | Use when the user asks 'is this ready to launch?', 'what am I missing before going live?', 'production readiness check', 'review my app for production', 'what should I add next?', or is about to ship a vibe-coded or AI-built app to real users. |
 <!-- catalog:end -->
 
 The `readiness-check` skill reviews projects against the
@@ -131,10 +153,14 @@ scripts and what they need. Read them before running them.
 
 ## Creating a new skill
 
-1. Create `skills/<skill-name>/SKILL.md`. The folder name must equal the `name` field.
+1. Create `skills/<bucket>/<skill-name>/SKILL.md`. The folder name must equal the `name`
+   field, and names are unique across buckets. Put a new skill in `in-progress/` until it
+   has been tried end to end, then move it to a topic bucket. A new topic bucket needs a
+   `README.md` and an entry in the plugin's `skills` list in
+   `.claude-plugin/marketplace.json`.
 
    ```
-   skills/<skill-name>/
+   skills/<bucket>/<skill-name>/
    ├── SKILL.md        required: frontmatter (name, description) + instructions
    ├── README.md       short human-facing summary and example
    ├── references/     optional: docs the agent reads on demand

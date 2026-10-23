@@ -30,7 +30,8 @@ clients expect, and each is enforced by a test, so a later change can't quietly 
 - **Tool descriptions as product copy,** with tests asserting that bulk/per-item
   cross-references, confirmation protocols and non-goals stay in place.
 - **Writes behind four gates:** destructive annotations, Claude Code's per-call prompt,
-  `permissions.ask`, and a fact-bearing confirmation step, all generated from one list.
+  `permissions.ask`, and a fact-bearing confirmation step. One `WRITE_TOOLS` list is the
+  source of truth, and a test fails if the annotations, meta or settings drift from it.
 - **Both protocol eras.** Every protocol test runs against the 2026-07-28 stateless
   revision and the older handshake era that many clients still speak.
 - **Kept current in CI.** This repository renders the template in five configurations on
@@ -79,6 +80,6 @@ Claude Code users can install the whole collection as a plugin instead; see the
 
 ## Links
 
-- [Skill source](../../../skills/fastmcp-server-scaffold/)
+- [Skill source](../../../skills/mcp/fastmcp-server-scaffold/)
 - [Design notes and gap analysis](design/gap-analysis.md)
 - [Catalog](../../catalog.md)

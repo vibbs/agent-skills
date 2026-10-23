@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Your recipes</h1>
+<p><a href="{{ url_for('main.new_recipe') }}">Add a recipe</a></p>
+<ul>
+  {% for r in recipes %}
+  <li><h2>{{ r.title }}</h2><p>{{ r.body }}</p></li>
+  {% else %}
+  <li>No recipes yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

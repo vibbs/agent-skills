@@ -102,6 +102,6 @@ advice.
 
 ## Links
 
-- [Skill source](../../../skills/readiness-check/)
-- [Item catalog](../../../skills/readiness-check/references/items-p1-p2.md)
+- [Skill source](../../../skills/operations/readiness-check/)
+- [Item catalog](../../../skills/operations/readiness-check/references/items-p1-p2.md)
 - [Catalog](../../catalog.md)

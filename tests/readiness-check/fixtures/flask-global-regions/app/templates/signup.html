@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create your account</h1>
+<form method="post">
+  {{ form.csrf_token }}
+  {{ form.email(placeholder="Email") }}
+  {{ form.display_name(placeholder="Your name") }}
+  {{ form.password(placeholder="Password") }}
+  <button type="submit">Sign up</button>
+</form>
+<p>Already have an account? <a href="{{ url_for('main.login') }}">Log in</a></p>
+{% endblock %}

@@ -2,6 +2,23 @@
 
 Contributions are welcome: new skills, fixes to existing ones, and tooling improvements.
 
+## Buckets
+
+Skills live at `skills/<bucket>/<skill-name>/`:
+
+| Bucket | For |
+|---|---|
+| `operations/` | running a project in production |
+| `mcp/` | building MCP servers and connectors |
+| `docs/` | explaining a system to its readers |
+| `in-progress/` | beta skills; not in the plugin, the README table or `docs/` |
+
+Each bucket has a `README.md` listing its skills; update it when you add or move one.
+Skill names stay unique across buckets, so moving a skill between buckets is not a
+rename and doesn't break installs. To add a topic bucket, create the folder with a
+`README.md` and add it to the plugin's `skills` list in `.claude-plugin/marketplace.json`;
+`scripts/check-docs.py` fails if a bucket is missing from that list.
+
 ## Rules for skills
 
 - **General-purpose only.** No company names, internal project names, private hostnames,
@@ -25,7 +42,7 @@ Contributions are welcome: new skills, fixes to existing ones, and tooling impro
 
 ## Docs and preview media
 
-Every skill has an overview page at `docs/skills/<name>/README.md`. It must open with a
+Every skill outside `in-progress/` has an overview page at `docs/skills/<name>/README.md`. It must open with a
 `## The problem` section: the problem a reader has before using the skill, in plain
 terms, before any description of features. Its first paragraph is quoted in
 `docs/catalog.md`, so make that paragraph stand on its own. Follow it with how the skill
@@ -108,4 +125,4 @@ updating, so merged changes reach plugin users only when a release is merged. Th
 without waiting for a release.
 
 The plugin's source is `./skills`, so only skill folders are copied into users' plugin
-caches. Keep it that way: anything a skill needs must live inside its own folder.
+caches; its `skills` list names the buckets to load, which keeps `in-progress/` out. Keep it that way: anything a skill needs must live inside its own folder.

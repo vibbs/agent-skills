@@ -195,11 +195,10 @@ def main(argv: list[str] | None = None) -> int:
             dest.chmod(dest.stat().st_mode | 0o755)
 
     written.append(PROVENANCE)
-    if not args.dry_run:
-        (out / PROVENANCE).write_text(json.dumps(provenance, indent=2) + "\n")
     if args.dry_run:
         print("\n".join(written))
         return 0
+    (out / PROVENANCE).write_text(json.dumps(provenance, indent=2) + "\n")
     print(f"Wrote {len(written)} files to {out}")
     print(f"  template {version} generated {today}; options recorded in {PROVENANCE}")
     print(f"  auth={args.auth} transport={'stdio+http' if http else 'stdio'} "

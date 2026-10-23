@@ -83,6 +83,7 @@ button { font-family: inherit; color: inherit; }
   font-family: var(--font-prose);
 }
 .hdr p { margin: 0; max-width: 76ch; color: var(--ink2); font-size: 13.5px; line-height: 1.5; }
+.hdr p.byline { margin-top: 6px; color: var(--ink3); font-size: 12px; }
 
 .modes { display: flex; gap: 4px; flex-shrink: 0; }
 .mode-btn {

@@ -48,15 +48,17 @@ Ask before generating. Use the agent's structured question tool if it has one.
 - **Transports**: stdio only, or stdio plus a deployed HTTP connector (`--no-http` for
   the former).
 - **Opt-ins** (`scripts/scaffold.py --list-features`): `output-schema`, `stateless`
-  (more than one replica), `pypi`, `registry` (MCP Registry, in preview), `inspector-ci`,
-  `coverage`, `security-scan`, `healthcheck`. Default to none unless the user has a reason.
-- **GitHub owner/repo**, for links and registry names.
+  (more than one replica), `pypi`, `registry` (MCP Registry, in preview; needs `pypi`),
+  `inspector-ci`, `coverage`, `security-scan`, `healthcheck`. Default to none unless the
+  user has a reason.
+- **GitHub owner/repo** (required), for links and registry names. Use the intended repo
+  even if it doesn't exist yet; the generator refuses to run without it.
 
 ### 3. Generate
 
 ```bash
 python3 <skill-dir>/scripts/scaffold.py --out <new-dir> --name <name> --auth <mode> \
-    [--no-http] [--with feature,feature] [--repo owner/name] [--title "..."]
+    --repo <owner>/<repo> [--no-http] [--with feature,feature] [--title "..."]
 ```
 
 It refuses to write into a non-empty directory, writes nothing outside `--out`, and needs
@@ -71,8 +73,12 @@ uv run ruff check --fix --exit-zero -q . && uv run ruff format -q .   # normalis
 uv run ruff check . && uv run pyright && uv run pytest
 ```
 
-If anything fails here, fix it before writing domain code. Do not weaken a test to get
-green: every test guards a convention the server depends on.
+The normalising step is quiet for names up to 23 characters (repo CI renders one that
+long). A longer name makes the env-var prefix longer, so a few strings can exceed the
+line limit: the first command prints `E501 Line too long` and `ruff check .` fails on
+them. Wrap those strings by hand. If anything else fails here, fix it before writing
+domain code. Do not weaken a test to get green: every test guards a convention the
+server depends on.
 
 ### 5. Domain pass: one capability wave at a time
 
@@ -100,8 +106,12 @@ Re-run the full baseline after every wave.
 ### 6. Verify
 
 - `uv run pytest` passes in both protocol eras (the registry tests run each twice).
-- `uv run fastmcp dev inspector src/<package>/server.py:create_mcp`: list the tools, call
-  a read tool, call a write tool unconfirmed and check the confirmation facts.
+- `uv run fastmcp dev inspector -m <package>`: list the tools, call a read tool, call a
+  write tool unconfirmed and check the confirmation facts. Use module mode: a
+  `server.py:create_mcp` spec fails on the package's relative imports. Set
+  `<PREFIX>FEATURE_WRITES=true` in the Inspector's environment panel to see write tools.
+  Headless equivalent: `npx @modelcontextprotocol/inspector --cli -e
+  <PREFIX>FEATURE_WRITES=true uv run <name> --method tools/list`.
 - **End-user simulation.** Give an agent nothing but this server's tools and ask it to do
   realistic user tasks. If it needs a hint from your notes to behave, that hint belongs in
   a tool description. The generated `.claude/agents/end-user.md` does this in Claude Code;

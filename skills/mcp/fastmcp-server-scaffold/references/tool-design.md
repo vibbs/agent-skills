@@ -110,8 +110,10 @@ Four gates, all needed:
 4. `user_confirmed` with a fact-bearing refusal: a soft guardrail, because the model sets
    it. Its docstring says so, so nobody deletes the real gates as redundant.
 
-1 to 3 come from `WRITE_TOOLS` in `tools/writes.py`; `test_write_gates.py` checks they
-agree with what is registered.
+`WRITE_TOOLS` in `tools/writes.py` is the source of truth for 1 to 3, but none is
+generated from it: the registry applies `WRITE`/`WRITE_META` per tool and
+`.claude/settings.json` is edited by hand. `test_write_gates.py` fails if any of them
+disagrees with the list.
 
 ## Untrusted text
 

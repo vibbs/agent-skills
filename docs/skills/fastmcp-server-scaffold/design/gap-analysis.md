@@ -422,8 +422,9 @@ audience-bound tokens, and the confused-deputy guidance [S5].
 **Update**
 - **Add MCP Inspector to the dev loop.** Reference READMEs document it as the debugging
   step [R1][R5].
-  - Use `fastmcp dev inspector src/<pkg>/server.py:create_mcp`, which gives auto-reload
-    [F3].
+  - Use `fastmcp dev inspector -m <pkg>`, which gives auto-reload [F3]. Module mode is
+    required: a `src/<pkg>/server.py:create_mcp` spec fails with "attempted relative
+    import with no known parent package", because FastMCP loads the file standalone.
   - Or `npx @modelcontextprotocol/inspector uv run python -m <pkg>`.
   - The notes list "MCP Inspector: never used" as a fact about the old project. The
     scaffold should not carry that forward.

@@ -54,7 +54,8 @@ async def test_entra_on_behalf_of_variant():
     route = respx.post(EXCHANGE).mock(
         return_value=httpx.Response(200, json={"access_token": "obo", "expires_in": 3600})
     )
-    await token_exchange.exchange(_cfg(SCAFFOLD_EXCHANGE_GRANT="entra-obo"), "inbound-jwt")
+    cfg = _cfg(SCAFFOLD_EXCHANGE_GRANT="entra-obo")
+    await token_exchange.exchange(cfg, "inbound-jwt")
     form = route.calls.last.request.read().decode()
     assert "requested_token_use=on_behalf_of" in form
     assert "scope=api%3A%2F%2Fupstream%2F.default" in form
@@ -64,5 +65,8 @@ async def test_entra_on_behalf_of_variant():
 async def test_exchange_failure_explains_what_to_check():
     token_exchange._cache.clear()
     respx.post(EXCHANGE).mock(return_value=httpx.Response(400, json={"error": "invalid_grant"}))
-    with pytest.raises(token_exchange.TokenExchangeError, match="SCAFFOLD_EXCHANGE_"):
+    with pytest.raises(
+        token_exchange.TokenExchangeError,
+        match="SCAFFOLD_EXCHANGE_",
+    ):
         await token_exchange.exchange(_cfg(), "inbound-jwt")

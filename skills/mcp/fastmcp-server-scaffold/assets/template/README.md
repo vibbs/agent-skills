@@ -83,8 +83,11 @@ is required, and how to generate it.
 ```bash
 uv sync --extra dev
 uv run pytest
-uv run fastmcp dev inspector src/scaffold_server/server.py:create_mcp
+uv run fastmcp dev inspector -m scaffold_server   # MCP Inspector, auto-reload
 ```
+
+In the Inspector, set `SCAFFOLD_FEATURE_WRITES=true` under Environment Variables to see
+the write tools; it does not inherit your shell's environment.
 
 See [AGENTS.md](AGENTS.md) for architecture, invariants and conventions, and
 [SECURITY.md](SECURITY.md) to report a vulnerability.

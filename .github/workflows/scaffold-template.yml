@@ -32,8 +32,9 @@ jobs:
             inspector: true
           - variant: proxy-minimal
             args: --auth proxy
-            # A name sorting after "tests" exercises import order after renaming.
-            name: zeta-desk
+            # A name sorting after "tests" exercises import order after renaming, and
+            # its 23 characters keep the template's line-length headroom honest.
+            name: zeta-enterprise-tickets
           - variant: proxy-stdio-only
             args: --auth proxy --no-http
           - variant: resource-server
@@ -46,6 +47,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4  # the Inspector CLI needs Node 22.19+
+        with:
+          node-version: "22"
 
       - name: Render
         run: >-
@@ -75,6 +79,19 @@ jobs:
           uv run ruff format --check .
           uv run pyright
           uv run pytest -v
+
+      # The command SKILL.md and the generated README give for the Inspector. `fastmcp
+      # dev inspector -m <pkg>` spawns `fastmcp run <pkg> --module`; run that same
+      # command headless so the documented dev loop can't rot.
+      - name: Inspector dev command (module mode) lists tools
+        working-directory: ${{ runner.temp }}/gen
+        run: |
+          name='${{ matrix.name || 'acme-tickets' }}'
+          pkg="${name//-/_}"
+          prefix="$(echo "$pkg" | tr '[:lower:]' '[:upper:]')_"
+          npx --yes @modelcontextprotocol/inspector --cli -e "${prefix}FEATURE_WRITES=true" \
+            uv run fastmcp run "$pkg" --module --no-banner --method tools/list > "$RUNNER_TEMP/tools.json"
+          python3 -c "import json; d=json.load(open('$RUNNER_TEMP/tools.json')); assert len(d['tools']) >= 3, d"
 
       - name: Inspector strict schema check
         if: matrix.inspector

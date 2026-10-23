@@ -26,7 +26,8 @@ def test_login_uses_pkce_and_state(monkeypatch, tmp_path):
     from tests.unit.helpers import configure_stdio
 
     configure_stdio(monkeypatch, tmp_path)
-    monkeypatch.setenv("SCAFFOLD_OAUTH_AUTHORIZE_URL", "https://idp.example.test/authorize")
+    authorize = "https://idp.example.test/authorize"
+    monkeypatch.setenv("SCAFFOLD_OAUTH_AUTHORIZE_URL", authorize)
     verifier, challenge = oauth_login.pkce_pair()
     url = oauth_login.authorize_url(load_config(env_file=None), "st4te", challenge)
     assert "code_challenge_method=S256" in url and "state=st4te" in url

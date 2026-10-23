@@ -20,11 +20,15 @@ uv run pyright                                        # type-check
 uv run pytest                                         # unit tests (what CI runs)
 uv run pytest tests/unit/test_registry.py::test_exact_tool_set_in_registration_order -v
 uv run scaffold-server                                # run on stdio
-uv run fastmcp dev inspector src/scaffold_server/server.py:create_mcp   # MCP Inspector
+uv run fastmcp dev inspector -m scaffold_server       # MCP Inspector (module mode)
 ```
 
 CI runs: `uv sync --locked --extra dev`, ruff check, ruff format --check, pyright, pytest.
 CI deliberately does not run `tests/integration/` (live upstream, opt-in).
+Run the Inspector in module mode (`-m`): a `server.py:create_mcp` spec fails, because
+FastMCP loads the file outside its package and the relative imports break. The Inspector
+does not inherit your shell's environment; set `SCAFFOLD_FEATURE_WRITES=true` in its
+Environment Variables panel to see the write tools.
 
 ## Architecture
 
@@ -74,9 +78,12 @@ must disappear too; `test_no_description_mentions_an_unregistered_tool` enforces
 Tools return failure dicts; the registry converts them to `isError` results. Unexpected
 exceptions are masked (`mask_error_details=True`) and logged server-side.
 
-### Writes have three gates, from one list
-`tools/writes.py` drives destructiveHint annotations, the Claude Code
-`requiresUserInteraction` meta, and `.claude/settings.json` `permissions.ask`.
+### Writes have three gates, checked against one list
+`WRITE_TOOLS` in `tools/writes.py` is the source of truth for destructiveHint
+annotations, the Claude Code `requiresUserInteraction` meta, and `.claude/settings.json`
+`permissions.ask`. None is generated: the registry applies `WRITE`/`WRITE_META` per tool
+and the settings file is edited by hand, so `tests/unit/test_write_gates.py` fails if any
+of them disagrees with the list.
 `user_confirmed` is a fourth, soft guardrail: the model sets it, so it is never the
 security boundary. Keep all of them.
 

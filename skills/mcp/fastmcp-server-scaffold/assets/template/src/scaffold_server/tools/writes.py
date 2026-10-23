@@ -1,7 +1,8 @@
 """The single list of write tools.
 
-Three mechanisms protect writes, and all three are generated from this list so they can
-never drift apart (tests/unit/test_write_gates.py asserts it):
+Three mechanisms protect writes. None is generated from this list (the registry applies
+WRITE/WRITE_META per tool, and .claude/settings.json is edited by hand), but all three
+must match it, and tests/unit/test_write_gates.py fails if they drift:
 
 1. destructive_hint annotations: claude.ai, VS Code and Codex use them to require approval.
 2. `_meta["anthropic/requiresUserInteraction"]`: Claude Code prompts on every call, even

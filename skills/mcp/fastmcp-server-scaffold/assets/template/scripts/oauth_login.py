@@ -4,11 +4,12 @@
 Runs a short-lived local listener, opens the authorize URL, catches the redirect, checks
 `state`, exchanges the code with PKCE, and writes the token file (auth/tokens.py).
 
-Everything about the listener (scheme, host, port, path) is parsed from the single
-SCAFFOLD_OAUTH_REDIRECT_URI value, so re-registering a different redirect is a config
-change, not a code change. The default is an http://127.0.0.1 loopback URI (RFC 8252).
-If your upstream only accepts https redirects, set an https URI and provide a local
-certificate via SCAFFOLD_LOGIN_CERT and SCAFFOLD_LOGIN_KEY, for example:
+Everything about the listener (scheme, host, port, path) is parsed from one value,
+SCAFFOLD_OAUTH_REDIRECT_URI, so re-registering a different redirect is a
+config change, not a code change. The default is an http://127.0.0.1 loopback URI
+(RFC 8252). If your upstream only accepts https redirects, set an https URI and
+provide a local certificate via SCAFFOLD_LOGIN_CERT and
+SCAFFOLD_LOGIN_KEY, for example:
     openssl req -x509 -newkey rsa:2048 -nodes -days 365 -subj /CN=localhost \\
         -keyout localhost.key -out localhost.crt
 
@@ -81,9 +82,13 @@ def wait_for_code(redirect_uri: str, expected_state: str, timeout_s: float) -> s
 
     server = http.server.HTTPServer((target.hostname or "127.0.0.1", target.port or 80), Handler)
     if target.scheme == "https":
-        cert, key = os.environ.get("SCAFFOLD_LOGIN_CERT"), os.environ.get("SCAFFOLD_LOGIN_KEY")
+        cert = os.environ.get("SCAFFOLD_LOGIN_CERT")
+        key = os.environ.get("SCAFFOLD_LOGIN_KEY")
         if not (cert and key):
-            raise SystemExit("https redirect URI needs SCAFFOLD_LOGIN_CERT and SCAFFOLD_LOGIN_KEY")
+            raise SystemExit(
+                "https redirect URI needs SCAFFOLD_LOGIN_CERT and "
+                "SCAFFOLD_LOGIN_KEY"
+            )
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(cert, key)
         server.socket = context.wrap_socket(server.socket, server_side=True)
@@ -128,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1
     if not cfg.oauth_authorize_url:
-        print("SCAFFOLD_OAUTH_AUTHORIZE_URL is required to sign in.", file=sys.stderr)
+        print("Set SCAFFOLD_OAUTH_AUTHORIZE_URL to sign in.", file=sys.stderr)
         return 1
     verifier, challenge = pkce_pair()
     state = secrets.token_urlsafe(24)

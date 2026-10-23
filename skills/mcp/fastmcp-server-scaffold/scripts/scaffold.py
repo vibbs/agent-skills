@@ -6,6 +6,8 @@ script's skill folder, and writes nothing outside --out.
 
   - Renames tokens: scaffold_server -> --package, scaffold-server -> --name,
     "Scaffold Server" -> --title, SCAFFOLD_ -> --env-prefix, OWNER/scaffold-server -> --repo.
+  - Validates option combinations: --repo is required, `registry` needs `pypi` (its
+    publish step runs in the PyPI release workflow), `stateless` needs HTTP.
   - Keeps or strips blocks between `scaffold:if <cond>` and `scaffold:end` marker lines.
     A condition is terms joined by `&` (all true) and `|` (any group true), each term
     optionally negated with `!`. Terms: auth=<mode>, http, with=<feature>.
@@ -14,8 +16,8 @@ script's skill folder, and writes nothing outside --out.
     and fills @TEMPLATE_VERSION@ and @GENERATED_DATE@ (the CHANGELOG's first entry).
 
 Usage:
-  scaffold.py --out ../acme-tickets-mcp --name acme-tickets --auth proxy
-  scaffold.py --out DIR --name NAME --auth none --with output-schema,coverage
+  scaffold.py --out ../acme-tickets-mcp --name acme-tickets --auth proxy --repo acme/tickets-mcp
+  scaffold.py --out DIR --name NAME --auth none --repo OWNER/REPO --with output-schema,coverage
   scaffold.py --list-features
 """
 
@@ -35,6 +37,7 @@ MANIFEST = SKILL_DIR / "assets" / "manifest.json"
 MARKER = re.compile(r"scaffold:(?:if\s+(?P<cond>\S+)|(?P<end>end))\b")
 SKIP_DIRS = {"__pycache__", ".ruff_cache", ".pytest_cache", ".venv", ".mypy_cache"}
 NAME_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
+REPO_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/[A-Za-z0-9._-]+$")
 FASTMCP_PIN = re.compile(r'^\s*"fastmcp(?P<spec>[^"]*)",?\s*$', re.M)
 PROVENANCE = ".scaffold.json"
 
@@ -98,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--package", help="Python package name (default: name with _)")
     p.add_argument("--title", help="human-readable title (default: from name)")
     p.add_argument("--env-prefix", help="environment variable prefix (default: PACKAGE upper-cased)")
-    p.add_argument("--repo", default="OWNER/scaffold-server", help="GitHub owner/name for links")
+    p.add_argument("--repo", help="GitHub owner/name for links and the registry name (required)")
     p.add_argument("--auth", choices=["proxy", "resource-server", "none"])
     p.add_argument("--no-http", action="store_true", help="stdio only (implied by --auth none)")
     p.add_argument("--with", dest="with_", default="", help=f"comma-separated: {', '.join(optional)}")
@@ -110,8 +113,11 @@ def main(argv: list[str] | None = None) -> int:
         for name, desc in optional.items():
             print(f"{name:16} {desc}")
         return 0
-    if not (args.out and args.name and args.auth):
-        p.error("--out, --name and --auth are required")
+    if not (args.out and args.name and args.auth and args.repo):
+        p.error("--out, --name, --auth and --repo are required "
+                "(--repo is the intended GitHub owner/name, even if it doesn't exist yet)")
+    if not REPO_RE.match(args.repo):
+        p.error("--repo must be owner/name, e.g. acme/acme-tickets-mcp")
     if not NAME_RE.match(args.name):
         p.error("--name must be kebab-case: lowercase letters, digits and single hyphens")
     selected = {w.strip() for w in args.with_.split(",") if w.strip()}
@@ -121,8 +127,9 @@ def main(argv: list[str] | None = None) -> int:
     http = not (args.no_http or args.auth == "none")
     if "stateless" in selected and not http:
         p.error("--with stateless needs the HTTP transport")
-    if "registry" in selected and not ("pypi" in selected or http):
-        p.error("--with registry needs a package (--with pypi) or a remote (HTTP transport)")
+    if "registry" in selected and "pypi" not in selected:
+        p.error("--with registry needs --with pypi: the registry publish step runs in the "
+                "PyPI release workflow, after the package is published")
 
     package = args.package or args.name.replace("-", "_")
     title = args.title or args.name.replace("-", " ").title()
@@ -160,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
             "env_prefix": prefix,
             "repo": args.repo,
             "auth": args.auth,
-            "no_http": args.no_http,
+            "no_http": not http,
             "with": sorted(selected),
         },
         "transport": "stdio+http" if http else "stdio",

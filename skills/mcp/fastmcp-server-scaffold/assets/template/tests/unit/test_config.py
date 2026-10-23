@@ -94,9 +94,11 @@ def test_client_id_guard_rejects_pasted_quotes():
 
 
 def test_client_id_guard_escape_hatch():
-    cfg = load_config(
-        _env(SCAFFOLD_OAUTH_CLIENT_ID='"client id"', SCAFFOLD_SKIP_CLIENT_ID_CHECK="true"), None
+    env = _env(
+        SCAFFOLD_OAUTH_CLIENT_ID='"client id"',
+        SCAFFOLD_SKIP_CLIENT_ID_CHECK="true",
     )
+    cfg = load_config(env, None)
     assert cfg.oauth_client_id == '"client id"'
 
 

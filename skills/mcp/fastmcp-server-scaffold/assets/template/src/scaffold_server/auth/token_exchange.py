@@ -56,8 +56,9 @@ async def exchange(cfg: AppConfig, subject_token: str) -> str:
         resp = await http.post(cfg.exchange_token_url, data=_form(cfg, subject_token), auth=auth)
     if resp.status_code != 200:
         raise TokenExchangeError(
-            f"Token exchange failed ({resp.status_code}). Check SCAFFOLD_EXCHANGE_* settings "
-            "and that the identity provider allows this client to exchange tokens."
+            f"Token exchange failed ({resp.status_code}). Check the "
+            "SCAFFOLD_EXCHANGE_* settings and that the identity provider allows "
+            "this client to exchange tokens."
         )
     body = resp.json()
     token = body["access_token"]

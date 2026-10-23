@@ -8,7 +8,6 @@
     "url": "https://github.com/OWNER/scaffold-server",
     "source": "github"
   },
-# scaffold:if with=pypi
   "packages": [
     {
       "registryType": "pypi",
@@ -24,7 +23,6 @@
 # scaffold:end
 # scaffold:if !http
   ]
-# scaffold:end
 # scaffold:end
 # scaffold:if http
   "remotes": [

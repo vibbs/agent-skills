@@ -13,7 +13,7 @@ from scaffold_server.tools import example
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("SCAFFOLD_LIVE_UPSTREAM") != "1",
-    reason="live upstream test; run: SCAFFOLD_LIVE_UPSTREAM=1 uv run pytest tests/integration",
+    reason="live upstream test; set SCAFFOLD_LIVE_UPSTREAM=1 to run it",
 )
 
 

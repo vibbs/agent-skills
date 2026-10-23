@@ -70,10 +70,13 @@ Users then run the server with `uvx <name>`.
 ## MCP Registry (`--with registry`)
 
 The official registry (registry.modelcontextprotocol.io) is in **preview**: breaking
-changes or data resets may happen.
+changes or data resets may happen. `registry` requires `pypi`: the publish step is a job
+in the PyPI release workflow and runs after the package is published, so the generator
+refuses `--with registry` on its own.
 
-- `server.json` (schema 2025-12-11) with name `io.github.<owner>/<name>`, a `pypi`
-  package entry and/or a `remotes` entry for the HTTP deployment.
+- `server.json` (schema 2025-12-11) with name `io.github.<owner>/<repo>` (from
+  `--repo`), a `pypi` package entry, and a `remotes` entry for the HTTP deployment
+  unless `--no-http`.
 - Ownership proof: `<!-- mcp-name: io.github.<owner>/<name> -->` in the README (which
   becomes the PyPI description), and `LABEL io.modelcontextprotocol.server.name` on the
   Docker image.

@@ -18,7 +18,8 @@ capability wave at a time.
 ## Example output
 
 ```
-$ python3 scripts/scaffold.py --out ../acme-tickets --name acme-tickets --auth proxy
+$ python3 scripts/scaffold.py --out ../acme-tickets --name acme-tickets --auth proxy \
+    --repo acme/acme-tickets
 Wrote 74 files to ../acme-tickets
   template 1.0.0 generated 2026-10-22; options recorded in .scaffold.json
   auth=proxy transport=stdio+http with=-

@@ -48,7 +48,9 @@ def main() -> None:
         return
     # scaffold:end
     if transport != "stdio":
-        raise SystemExit(f"Unknown SCAFFOLD_TRANSPORT={transport!r} (use stdio|http)")
+        raise SystemExit(
+            f"Unknown SCAFFOLD_TRANSPORT={transport!r} (use stdio|http)"
+        )
     from .server import create_mcp
 
     create_mcp().run(transport="stdio", show_banner=False)

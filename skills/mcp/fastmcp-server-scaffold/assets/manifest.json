@@ -4,7 +4,7 @@
     "output-schema": "typed TypedDict return values, so tools advertise an outputSchema",
     "stateless": "stateless HTTP sessions, required for more than one replica",
     "pypi": "release workflow publishing to PyPI with trusted publishing (uvx install)",
-    "registry": "server.json and an MCP Registry publish step (registry is in preview)",
+    "registry": "server.json and an MCP Registry publish step after the PyPI release; needs pypi (registry is in preview)",
     "inspector-ci": "MCP Inspector --strict schema-portability check in CI",
     "coverage": "pytest-cov with an 80% branch-coverage gate",
     "security-scan": "gitleaks and zizmor workflows",

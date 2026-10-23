@@ -1,4 +1,4 @@
-"""All three write gates come from tools/writes.py and must agree with what's registered."""
+"""All three write gates must agree with WRITE_TOOLS in tools/writes.py."""
 
 import json
 from pathlib import Path

@@ -1,8 +1,8 @@
 """Settings model, layered loader, and startup guards.
 
 Precedence, highest first: process environment > local `.env` file > JSON config file
-(path in SCAFFOLD_CONFIG_FILE). Empty strings count as unset at every layer, so a blank
-env var falls through instead of shadowing a real value.
+(path in SCAFFOLD_CONFIG_FILE). Empty strings count as unset at every layer, so a
+blank env var falls through instead of shadowing a real value.
 
 The stdio path never calls load_config() at startup; the auth layer loads it lazily per
 request. That keeps local startup instant and failure-free before login, and it is why
@@ -196,8 +196,8 @@ def load_config(
     }
     if "upstream_base_url" not in values:
         raise RuntimeError(
-            "SCAFFOLD_UPSTREAM_BASE_URL is required: it is the API every tool calls. "
-            "Set it in the environment or .env (see .env.example)."
+            "SCAFFOLD_UPSTREAM_BASE_URL is required: it is the API every tool "
+            "calls. Set it in the environment or .env (see .env.example)."
         )
     _check_choice(
         values,
@@ -239,8 +239,8 @@ def _check_mode_requirements(cfg: AppConfig) -> None:
     if cfg.auth_mode == "none":
         if cfg.transport == "http":
             raise RuntimeError(
-                "SCAFFOLD_AUTH_MODE=none supports stdio only: an unauthenticated HTTP "
-                "server would let anyone act with the configured upstream credential. "
+                "SCAFFOLD_AUTH_MODE=none supports stdio only: an unauthenticated "
+                "HTTP server would let anyone act with the configured upstream credential. "
                 "Use auth mode 'proxy' or 'resource-server' for HTTP."
             )
         _require(
@@ -316,9 +316,10 @@ def guard_client_id(value: str | None, env: Mapping[str, str]) -> None:
     if override and as_bool("SCAFFOLD_SKIP_CLIENT_ID_CHECK", override):
         return
     raise RuntimeError(
-        f"SCAFFOLD_OAUTH_CLIENT_ID looks malformed ({fingerprint(value, public=True)}). "
-        "Check for quotes, whitespace, or a secret pasted into the id field. If the "
-        "value really is correct, set SCAFFOLD_SKIP_CLIENT_ID_CHECK=true."
+        f"SCAFFOLD_OAUTH_CLIENT_ID looks malformed "
+        f"({fingerprint(value, public=True)}). Check for quotes, whitespace, or a secret "
+        "pasted into the id field. If the value really is correct, set "
+        "SCAFFOLD_SKIP_CLIENT_ID_CHECK=true."
     )
 
 

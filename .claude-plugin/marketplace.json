@@ -9,7 +9,11 @@
     {
       "name": "vibbs-agent-skills",
       "source": "./skills",
-      "skills": "./",
+      "skills": [
+        "./operations",
+        "./mcp",
+        "./docs"
+      ],
       "strict": false,
       "description": "Reusable agent skills following the open Agent Skills specification.",
       "version": "0.3.0",
@@ -27,7 +31,9 @@
         "diagrams",
         "production-readiness",
         "review",
-        "launch-checklist"
+        "launch-checklist",
+        "mcp",
+        "fastmcp"
       ]
     }
   ]

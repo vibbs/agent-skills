@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the skills catalog from skills/*/SKILL.md frontmatter.
+"""Regenerate the skills catalog from skills/<bucket>/<skill>/SKILL.md frontmatter.
 
 Writes two generated blocks:
   README.md         the skills table, with a preview thumbnail per skill
@@ -7,6 +7,10 @@ Writes two generated blocks:
 
 The catalog also quotes the first paragraph of each overview page's
 "## The problem" section, so the problem statement has one source.
+
+Skills are grouped by bucket, in the order the plugin's "skills" list in
+.claude-plugin/marketplace.json gives. Buckets not in that list (in-progress/)
+are left out. Each bucket's heading and blurb come from skills/<bucket>/README.md.
 
 Preview media is found by convention, never declared in a skill:
   docs/skills/<name>/media/preview.png   thumbnail for the README table
@@ -28,6 +32,7 @@ from pathlib import Path
 SKILLS_REF_VERSION = "0.1.1"
 REPO = "vibbs/agent-skills"
 ROOT = Path(__file__).resolve().parent.parent
+MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 README = ROOT / "README.md"
 CATALOG = ROOT / "docs" / "catalog.md"
 BEGIN = "<!-- catalog:begin -->"
@@ -78,15 +83,31 @@ def problem_statement(name: str) -> str:
     return " ".join(m.group(1).split()) if m else ""
 
 
-def skills() -> list[dict]:
+def shipped_buckets() -> list[str]:
+    """Bucket folder names the plugin ships, in the order it lists them."""
+    plugin = json.loads(MARKETPLACE.read_text())["plugins"][0]
+    return [Path(p).name for p in plugin["skills"]]
+
+
+def bucket_info(bucket: str) -> tuple[str, str]:
+    """Return (title, blurb) from the bucket README's heading and first paragraph."""
+    text = (ROOT / "skills" / bucket / "README.md").read_text()
+    title = re.search(r"^# (.+)$", text, re.M)
+    blurb = re.search(r"^# [^\n]+\n\s*\n(.*?)(?:\n\s*\n|\Z)", text, re.M | re.S)
+    return (title.group(1).strip() if title else bucket,
+            " ".join(blurb.group(1).split()) if blurb else "")
+
+
+def skills(bucket: str) -> list[dict]:
     out = []
-    for skill_md in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for skill_md in sorted((ROOT / "skills" / bucket).glob("*/SKILL.md")):
         props = read_properties(skill_md.parent)
         summary, when = split_description(props["description"])
         name = props["name"]
         media = ROOT / "docs" / "skills" / name / "media"
         out.append({
             "name": name,
+            "bucket": bucket,
             "summary": summary,
             "problem": problem_statement(name),
             "when": when,
@@ -96,39 +117,52 @@ def skills() -> list[dict]:
     return out
 
 
-def readme_table(items: list[dict]) -> str:
-    rows = ["| Preview | Skill | Description | When it triggers |", "|---|---|---|---|"]
-    for s in items:
-        n = s["name"]
-        preview = "-"
-        if s["thumb"]:
-            preview = (f'<a href="docs/skills/{n}/"><img src="docs/skills/{n}/media/preview.png" '
-                       f'width="{THUMB_WIDTH}" alt="{n} preview"></a>')
-        link = f"[`{n}`](docs/skills/{n}/)"
-        rows.append(f"| {preview} | {link} | {cell(s['summary'])}. | {cell(s['when']) or '-'} |")
-    return "\n".join(rows)
-
-
-def catalog_sections(items: list[dict]) -> str:
+def readme_table(groups: list[tuple[str, list[dict]]]) -> str:
     parts = []
-    for s in items:
-        n = s["name"]
-        lines = [f"## {n}", "", f"{s['summary']}.", ""]
-        if s["problem"]:
-            lines += [f"**The problem:** {s['problem']}", ""]
-        if s["when"]:
-            lines += [f"**When it triggers:** {s['when']}", ""]
-        if s["gif"]:
-            lines += [f'<img src="skills/{n}/media/tour.gif" width="{GIF_WIDTH}" '
-                      f'alt="{n}: animated preview">', ""]
-        lines += [
-            "```bash",
-            f"npx skills add {REPO} --skill {n}",
-            "```",
-            "",
-            f"[Overview](skills/{n}/) · [Source](../skills/{n}/)",
-        ]
-        parts.append("\n".join(lines))
+    for bucket, items in groups:
+        title, blurb = bucket_info(bucket)
+        rows = [f"### {title}", ""]
+        if blurb:
+            rows += [blurb, ""]
+        rows += ["| Preview | Skill | Description | When it triggers |", "|---|---|---|---|"]
+        for s in items:
+            n = s["name"]
+            preview = "-"
+            if s["thumb"]:
+                preview = (f'<a href="docs/skills/{n}/"><img src="docs/skills/{n}/media/preview.png" '
+                           f'width="{THUMB_WIDTH}" alt="{n} preview"></a>')
+            link = f"[`{n}`](docs/skills/{n}/)"
+            rows.append(f"| {preview} | {link} | {cell(s['summary'])}. | {cell(s['when']) or '-'} |")
+        parts.append("\n".join(rows))
+    return "\n\n".join(parts)
+
+
+def catalog_sections(groups: list[tuple[str, list[dict]]]) -> str:
+    parts = []
+    for bucket, items in groups:
+        title, blurb = bucket_info(bucket)
+        head = [f"## {title}", ""]
+        if blurb:
+            head += [blurb, ""]
+        parts.append("\n".join(head).rstrip())
+        for s in items:
+            n = s["name"]
+            lines = [f"### {n}", "", f"{s['summary']}.", ""]
+            if s["problem"]:
+                lines += [f"**The problem:** {s['problem']}", ""]
+            if s["when"]:
+                lines += [f"**When it triggers:** {s['when']}", ""]
+            if s["gif"]:
+                lines += [f'<img src="skills/{n}/media/tour.gif" width="{GIF_WIDTH}" '
+                          f'alt="{n}: animated preview">', ""]
+            lines += [
+                "```bash",
+                f"npx skills add {REPO} --skill {n}",
+                "```",
+                "",
+                f"[Overview](skills/{n}/) · [Source](../skills/{bucket}/{n}/)",
+            ]
+            parts.append("\n".join(lines))
     return "\n\n".join(parts)
 
 
@@ -155,9 +189,9 @@ def replace_block(path: Path, body: str, check: bool) -> bool:
 
 def main() -> int:
     check = "--check" in sys.argv[1:]
-    items = skills()
-    ok = replace_block(README, readme_table(items), check)
-    ok = replace_block(CATALOG, catalog_sections(items), check) and ok
+    groups = [(b, skills(b)) for b in shipped_buckets()]
+    ok = replace_block(README, readme_table(groups), check)
+    ok = replace_block(CATALOG, catalog_sections(groups), check) and ok
     return 0 if ok else 1
 
 

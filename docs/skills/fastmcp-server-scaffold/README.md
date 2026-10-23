@@ -79,6 +79,6 @@ Claude Code users can install the whole collection as a plugin instead; see the
 
 ## Links
 
-- [Skill source](../../../skills/fastmcp-server-scaffold/)
+- [Skill source](../../../skills/mcp/fastmcp-server-scaffold/)
 - [Design notes and gap analysis](design/gap-analysis.md)
 - [Catalog](../../catalog.md)

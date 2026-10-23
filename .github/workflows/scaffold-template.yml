@@ -6,12 +6,12 @@ name: scaffold-template
 on:
   pull_request:
     paths:
-      - "skills/fastmcp-server-scaffold/**"
+      - "skills/mcp/fastmcp-server-scaffold/**"
       - ".github/workflows/scaffold-template.yml"
   push:
     branches: [main]
     paths:
-      - "skills/fastmcp-server-scaffold/**"
+      - "skills/mcp/fastmcp-server-scaffold/**"
   schedule:
     # Weekly: the template floats on fastmcp>=4.1,<4.2 and other ranges, so upstream
     # releases can break it without any change here.
@@ -49,7 +49,7 @@ jobs:
 
       - name: Render
         run: >-
-          python3 skills/fastmcp-server-scaffold/scripts/scaffold.py
+          python3 skills/mcp/fastmcp-server-scaffold/scripts/scaffold.py
           --out "$RUNNER_TEMP/gen" --name ${{ matrix.name || 'acme-tickets' }}
           --repo example/${{ matrix.name || 'acme-tickets' }} ${{ matrix.args }}
 

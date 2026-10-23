@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Check that skill docs and preview media follow the repository conventions.
 
-  - every skill in skills/ has docs/skills/<name>/README.md with a
+  - every skill sits in a bucket, at skills/<bucket>/<skill>/, and skill names
+    are unique across buckets
+  - every bucket has a README.md, and the plugin's "skills" list in
+    .claude-plugin/marketplace.json names every bucket except in-progress/
+  - every shipped skill has docs/skills/<name>/README.md with a
     "## The problem" section
   - every docs/skills/<name>/ belongs to a skill that exists
   - every relative link or image in docs/ points at a file that exists
@@ -10,11 +14,13 @@
 
 No dependencies. Usage: scripts/check-docs.py
 """
+import json
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+UNSHIPPED = {"in-progress"}
 MAX_MEDIA_BYTES = 2 * 1024 * 1024
 LINK = re.compile(r"""(?:\]\(|src=["'])([^)"'#\s]+)""")
 TEXT_SUFFIXES = {".md", ".js", ".jsx", ".mjs", ".css", ".html", ".json"}
@@ -22,7 +28,29 @@ TEXT_SUFFIXES = {".md", ".js", ".jsx", ".mjs", ".css", ".html", ".json"}
 
 def main() -> int:
     errors = []
-    skills = {p.parent.name for p in ROOT.glob("skills/*/SKILL.md")}
+    for p in sorted(ROOT.glob("skills/*/SKILL.md")):
+        errors.append(f"{p.parent.relative_to(ROOT)}: skills belong in a bucket, skills/<bucket>/<skill>/")
+
+    buckets = sorted(p.name for p in (ROOT / "skills").iterdir() if p.is_dir())
+    for b in buckets:
+        if not (ROOT / "skills" / b / "README.md").is_file():
+            errors.append(f"skills/{b}: missing README.md for the bucket")
+    plugin = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())["plugins"][0]
+    listed = {Path(p).name for p in plugin.get("skills", [])}
+    for b in sorted(set(buckets) - UNSHIPPED - listed):
+        errors.append(f"skills/{b}: bucket missing from the plugin's skills list in marketplace.json")
+    for b in sorted(listed - set(buckets)):
+        errors.append(f"marketplace.json: plugin lists ./{b} but skills/{b}/ does not exist")
+    for b in sorted(listed & UNSHIPPED):
+        errors.append(f"marketplace.json: {b}/ must not ship in the plugin")
+
+    found = {}
+    for p in sorted(ROOT.glob("skills/*/*/SKILL.md")):
+        found.setdefault(p.parent.name, []).append(p.parent.parent.name)
+    for name, where in found.items():
+        if len(where) > 1:
+            errors.append(f"skill name {name} is used in more than one bucket: {', '.join(where)}")
+    skills = {n for n, where in found.items() if where[0] not in UNSHIPPED}
     documented = {p.name for p in (ROOT / "docs" / "skills").glob("*") if p.is_dir()}
 
     for name in sorted(skills - documented):

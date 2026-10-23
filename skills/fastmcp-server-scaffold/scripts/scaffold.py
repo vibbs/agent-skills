@@ -10,6 +10,8 @@ script's skill folder, and writes nothing outside --out.
     A condition is terms joined by `&` (all true) and `|` (any group true), each term
     optionally negated with `!`. Terms: auth=<mode>, http, with=<feature>.
   - Drops whole files whose manifest condition is false.
+  - Writes .scaffold.json recording the template version, date, FastMCP pin and options,
+    and fills @TEMPLATE_VERSION@ and @GENERATED_DATE@ (the CHANGELOG's first entry).
 
 Usage:
   scaffold.py --out ../acme-tickets-mcp --name acme-tickets --auth proxy
@@ -20,6 +22,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime
 import fnmatch
 import json
 import re
@@ -32,6 +35,8 @@ MANIFEST = SKILL_DIR / "assets" / "manifest.json"
 MARKER = re.compile(r"scaffold:(?:if\s+(?P<cond>\S+)|(?P<end>end))\b")
 SKIP_DIRS = {"__pycache__", ".ruff_cache", ".pytest_cache", ".venv", ".mypy_cache"}
 NAME_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
+FASTMCP_PIN = re.compile(r'^\s*"fastmcp(?P<spec>[^"]*)",?\s*$', re.M)
+PROVENANCE = ".scaffold.json"
 
 
 def load_manifest() -> dict:
@@ -75,6 +80,13 @@ def replace_tokens(text: str, tokens: list[tuple[str, str]]) -> str:
     for old, new in tokens:
         text = text.replace(old, new)
     return text
+
+
+def fastmcp_pin() -> str:
+    m = FASTMCP_PIN.search((TEMPLATE / "pyproject.toml").read_text())
+    if not m:
+        raise SystemExit("assets/template/pyproject.toml: no fastmcp dependency line")
+    return m.group("spec")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,6 +145,26 @@ def main(argv: list[str] | None = None) -> int:
     binary_globs = manifest.get("binary", [])
     file_conditions: dict[str, str] = manifest.get("files", {})
     substitutions = manifest.get("substitutions", [])
+    version = manifest["version"]
+    today = datetime.date.today().isoformat()
+    stamps = [("@TEMPLATE_VERSION@", version), ("@GENERATED_DATE@", today)]
+    provenance = {
+        "skill": "fastmcp-server-scaffold",
+        "template_version": version,
+        "generated": today,
+        "fastmcp": fastmcp_pin(),
+        "options": {
+            "name": args.name,
+            "package": package,
+            "title": title,
+            "env_prefix": prefix,
+            "repo": args.repo,
+            "auth": args.auth,
+            "no_http": args.no_http,
+            "with": sorted(selected),
+        },
+        "transport": "stdio+http" if http else "stdio",
+    }
 
     written: list[str] = []
     for src in sorted(TEMPLATE.rglob("*")):
@@ -158,14 +190,17 @@ def main(argv: list[str] | None = None) -> int:
                 if sub["find"] not in text:
                     raise SystemExit(f"{rel}: substitution target not found: {sub['find']!r}")
                 text = text.replace(sub["find"], value)
-        dest.write_text(replace_tokens(text, tokens))
+        dest.write_text(replace_tokens(replace_tokens(text, stamps), tokens))
         if src.stat().st_mode & 0o111:
             dest.chmod(dest.stat().st_mode | 0o755)
 
+    written.append(PROVENANCE)
     if args.dry_run:
         print("\n".join(written))
         return 0
+    (out / PROVENANCE).write_text(json.dumps(provenance, indent=2) + "\n")
     print(f"Wrote {len(written)} files to {out}")
+    print(f"  template {version} generated {today}; options recorded in {PROVENANCE}")
     print(f"  auth={args.auth} transport={'stdio+http' if http else 'stdio'} "
           f"with={','.join(sorted(selected)) or '-'}")
     print("Next:")

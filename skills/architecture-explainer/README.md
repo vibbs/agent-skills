@@ -18,7 +18,10 @@ an architecture you did not describe.
 ## Example output
 
 The agent writes a spec like this (excerpt from the bundled worked example,
-`assets/runtime/specs/llm-eval.js`) and builds it to `dist/index.html`:
+`assets/runtime/specs/llm-eval.js`) and builds it. The page shows the spec's title in the
+browser tab and "By <author> · Updated <date>" under the subtitle; the linter fails a spec
+with no `meta.updated`. Each build is copied to `<slug-of-title>-<YYYY-MM-DD>.html` (with `-2`, `-3` if that name is
+taken), so a second build never overwrites the first:
 
 ```js
 {
@@ -39,7 +42,12 @@ spec: How an LLM Evaluation Pipeline Actually Works
 
 lint passed
 dist/index.html  173.87 kB │ gzip: 90.76 kB
+
+$ cp dist/index.html how-an-llm-evaluation-pipeline-actually-works-2026-07-14.html
 ```
+
+Each explainer gets its own working folder, `explainer-<slug>/`; a second explainer in
+the same project reuses that runtime with a new spec.
 
 ## Requirements
 
@@ -56,7 +64,7 @@ In the Claude web and desktop apps (skill uploaded as a ZIP), the build runs in 
 code execution sandbox. This is untested: `npm install` needs access to the npm registry,
 and the screenshot step needs Playwright to download Chromium, which the sandbox's
 network settings may block. If only the screenshot step fails, the built
-`dist/index.html` is still usable but has not been visually checked.
+file is still usable but has not been visually checked.
 
 ## Bundled scripts
 

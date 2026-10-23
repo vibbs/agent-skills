@@ -117,6 +117,9 @@ Tell the user:
   (`references/client-compat.md`), e.g. claude.ai drops server instructions.
 - What remains: real tools, `infra/` (intentionally empty), deployment, the first
   runbook.
+- That `.scaffold.json` at the project root records the template version, generation
+  date, FastMCP pin and options used; keep it committed so later upgrades can diff
+  against the template version it came from.
 
 ## Non-negotiables
 

@@ -9,7 +9,8 @@ browser.
 The review runs against a roadmap of 126 production topics, each placed by phase (when
 it first needs attention, started by an event, not a date) and level (the seniority of
 the engineer who'd remember it). Overrides pull items forward for AI features, payments,
-health data, kids as users, and EU or Indian users.
+health data, kids as users, and where your users are: EU, India, other countries with
+privacy or data-localisation laws, or a global audience.
 
 The skill asks at most six short questions, only what the repo can't answer, and
 remembers the answers for next time. It never changes your code. It writes:

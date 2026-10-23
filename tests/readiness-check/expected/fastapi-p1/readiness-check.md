@@ -103,8 +103,7 @@ Roadmap based on a list of 111 production topics by {{ORIGINAL_POST_HANDLE}} (ht
       "none"
     ],
     "regions": [
-      "us",
-      "elsewhere"
+      "us"
     ],
     "multi_tenant": "no",
     "answered_on": "2026-10-21"

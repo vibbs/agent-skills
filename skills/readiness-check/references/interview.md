@@ -18,7 +18,8 @@ each question can carry a default taken from what the scan found.
   the verdict.
 - **Ask once.** If the agent has a structured question tool, use it with all questions in
   one call. Otherwise ask once as a numbered list in plain text and wait for one reply.
-  Accept short replies ("1a 2b 3 b2c 4 ai 5 eu,us 6 no"), and use the default for
+  Accept short replies ("1a 2b 3 b2c 4 ai 5 eu,us 6 no" or "5 elsewhere: br, uk"), and
+  use the default for
   anything the user skips.
 - **No interview at all** when every key is already stored. Say "Using your answers from
   <date>" in the report and move on.
@@ -66,14 +67,23 @@ LemonSqueezy SDK or a balance / credits table → `payments`; fields like diagno
 prescription → `health`. Nothing found → `none`.
 
 ### Q5 · `regions`: Where are your users? (pick all that apply)
-- `eu`
+- `eu`: the EU or EEA.
 - `india`
 - `us`
-- `elsewhere`
+- `elsewhere`: name the countries. Stored as ISO country codes under `countries`
+  (`["GB", "BR"]`).
+- `global`: anywhere, a public launch to everyone, or not sure.
 
-Default: `us` plus `elsewhere`, unless the repo shows locales, currencies or hosting
-regions that suggest more (`de`, `fr` locales or EUR → suggest `eu`; INR, `hi` locale or
-Razorpay → suggest `india`).
+Default: `global`, unless the repo shows locales, currencies or hosting regions that
+point somewhere specific. Suggest from what it shows: `de`, `fr` locales or EUR → `eu`;
+INR, `hi` locale or Razorpay → `india`; `pt-BR` or BRL → `elsewhere` with `BR`; `zh`
+locale, CNY, Alipay or WeChat Pay → `elsewhere` with `CN`. A US-only signal (USD only,
+US-only shipping) → `us`.
+
+`elsewhere` needs its countries: ask for them in the same question. If a stored answer
+has `elsewhere` but no `countries` (reports written before this key existed), ask only
+for the countries; that is a missing answer, not a repeated question. The mapping from
+answers to override cards is in `references/overrides.md`.
 
 ### Q6 · `multi_tenant`: Do several customer organisations share the app, each seeing only its own data?
 - `no`: single tenant, or each user only sees their own data. (default for `b2c`)
@@ -106,8 +116,9 @@ previews the P4 core plus the track from `market`.
 
 ## Overrides
 
-From the answers: `domains` → health, payments, kids, ai; `regions` → eu, india. Read
-`references/overrides.md` for what each pulls. Multi-tenant isn't an override; it only
+From the answers: `domains` → health, payments, kids, ai; `regions` (and `countries`)
+→ EU users, Indian users, Privacy-law regions, Data-localisation regions, mapped by the
+table in `references/overrides.md`. Read that file for what each card pulls. Multi-tenant isn't an override; it only
 switches the Tenant Isolation `applies` condition.
 
 ## Confirmations
@@ -134,6 +145,9 @@ Under `answers` in the machine state:
   "answered_on": "2026-10-21"
 }
 ```
+
+`countries` is stored only when `regions` includes `elsewhere`, for example
+`"regions": ["eu", "elsewhere"], "countries": ["GB", "BR"]`.
 
 Store the user's choice, not the default, and only after they answered (an accepted
 default counts as an answer). Never store guesses the user didn't see.

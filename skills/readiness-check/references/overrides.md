@@ -5,7 +5,7 @@ region: if it applies, the items it lists are pulled forward into P2 and reviewe
 the current phase. Read this file at workflow step 4, after the interview, to decide
 which overrides apply and what they pull.
 
-The six cards match `overrides` in `assets/roadmap.json`. If the two ever disagree, the
+The eight cards match `overrides` in `assets/roadmap.json`. If the two ever disagree, the
 JSON wins.
 
 > Not legal advice. These cards say which engineering items to bring forward. Whether a
@@ -25,6 +25,24 @@ JSON wins.
   the app calls OpenAI from app/api/chat/route.ts."
 - Show the card's `extra` line once, under the override list, when it adds an action
   the item list doesn't cover (for example, signing BAAs).
+
+## Region answers → cards
+
+Region cards are grouped by the engineering they pull, not by country: most privacy laws
+ask for the same work, so one card covers many of them. Map the `regions` answer (and
+`countries`, for `elsewhere`) like this:
+
+| Answer | Cards that apply |
+|---|---|
+| `eu` (EU or EEA) | EU users |
+| `india` | Indian users |
+| `us` | none by default. US state privacy laws (California's CCPA/CPRA and others) apply above size or data-volume thresholds; apply Privacy-law regions only if the user says one applies to them. |
+| `elsewhere` + countries | Privacy-law regions for a country with a comprehensive privacy law (UK, Switzerland, Brazil, Canada, Japan, South Korea, Australia and many more); Data-localisation regions for China or Russia. If you're not sure whether a country has such a law, apply Privacy-law regions: the work it pulls is worth doing anyway. |
+| `global` (anywhere, or not sure) | EU users, Indian users and Privacy-law regions. Not Data-localisation regions unless the user confirms they serve China, Russia or another country that requires it. |
+
+Each region card is listed once, however many answers pull it. Its reason names what
+pulled it ("Privacy-law regions: you said you have users in Brazil and the UK";
+"EU users: you said your users are worldwide").
 
 ## The cards
 
@@ -66,7 +84,9 @@ JSON wins.
 
 ### EU users
 - **Law:** GDPR · European Accessibility Act (EAA).
-- **Applies when:** people in the EU use the app, or the app is offered to them.
+- **Applies when:** people in the EU use the app, or the app is offered to them. The
+  EEA countries (Iceland, Liechtenstein, Norway) apply GDPR too. The UK has its own
+  version (UK GDPR) and gets the Privacy-law regions card instead, without the EAA.
 - **Pulls into P2:** GDPR & Privacy, Accessibility (WCAG 2.1 AA).
 - **Why:** both apply from the first EU user, not from scale.
 - **Facts to keep exact:**
@@ -88,6 +108,36 @@ JSON wins.
 - **Facts to keep exact:** consent notices, breach reporting and children's-data rules
   apply from **13 May 2027**. Before that date, present it as "coming, design for it
   now", not as a current legal requirement.
+
+### Privacy-law regions
+- **Law:** UK GDPR · LGPD (Brazil) · PIPEDA (Canada) · CCPA/CPRA (California) and the
+  other comprehensive privacy laws (Switzerland, Japan, South Korea, Australia and many
+  more).
+- **Applies when:** the app has users in one of those places (see the table above), or
+  the user answered `global`.
+- **Pulls into P2:** GDPR & Privacy, PII Handling.
+- **Why:** these laws differ in detail, but almost all ask for the same engineering: a
+  privacy notice, a lawful basis or consent for what you collect, and a way for people
+  to see, export and delete their data. Building that before launch is far cheaper than
+  retrofitting it.
+- **Facts to keep exact:** don't quote thresholds, dates or penalties for these laws;
+  several apply only above a size or revenue threshold, and they change. Say "may apply"
+  and name the law.
+- GDPR & Privacy is named after GDPR but checks the shared work (notice, consent,
+  export, deletion); review it the same way for any of these laws.
+
+### Data-localisation regions
+- **Law:** PIPL (China) · Russia's personal-data localisation law, and similar rules
+  elsewhere.
+- **Applies when:** the user confirms they serve people in a country that restricts
+  where personal data is stored or how it leaves (China and Russia are the common ones).
+- **Pulls into P2:** Data Residency.
+- **Why:** these rules may require personal data to be stored in the country, or a formal
+  assessment or contract before it is transferred out. Where your database runs is a
+  launch decision; moving it later is a migration.
+- **Facts to keep exact:** whether and how the rule applies depends on the data, the
+  volume and the business. Present it as "may require", and point to a lawyer for the
+  answer.
 
 ## Wording in the report
 

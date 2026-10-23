@@ -53,7 +53,9 @@ APPLIES     a condition, or null (Tenant Isolation only applies to multi-tenant 
 ```
 
 **Overrides** keyed by domain and region pull items forward into P2: health data,
-payments, kids as users, AI features, EU users, Indian users. AI features, for example,
+payments, kids as users, AI features, EU users, Indian users, privacy-law regions and
+data-localisation regions. Region cards are grouped by what they pull, not by country,
+and a `global` answer applies the privacy cards together. AI features, for example,
 pulls rate limiting, token budgets and prompt-injection defence into P2, because one
 open endpoint calling a paid model can run up a bill overnight.
 
@@ -137,7 +139,7 @@ that the repo can't settle:
 2. Real traffic, paying users or a second engineer yet?
 3. B2B or B2C?
 4. Domain flags: health data, payments, kids as users, AI features?
-5. Where are your users: EU, India, US, elsewhere?
+5. Where are your users: EU, India, US, elsewhere (which countries), or global?
 6. Multi-tenant (several customer orgs sharing the app)?
 
 If the agent has a structured multiple-choice question tool, use it with all the

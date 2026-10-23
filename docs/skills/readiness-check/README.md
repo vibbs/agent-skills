@@ -24,7 +24,10 @@ The skill reviews the repository against a roadmap that gives every item an orde
 - **Level:** the seniority of the engineer who'd remember it, from beginner to advanced.
 - **Overrides:** cards keyed by domain and region that pull items forward. AI features
   pull rate limiting, token budgets and prompt-injection defence into pre-launch; EU users
-  pull in GDPR and WCAG 2.1 AA accessibility.
+  pull in GDPR and WCAG 2.1 AA accessibility. Region cards are grouped by what they pull,
+  not by country: one card covers the many privacy laws that ask for the same work, one
+  covers data-localisation rules, and a "global" answer applies the privacy cards
+  together.
 
 From that, the report answers three questions: where you are, what your current phase
 needs, and what to skip for now. Each item is marked **do now**, **confirm**, **in

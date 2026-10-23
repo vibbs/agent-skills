@@ -8,8 +8,7 @@
     "none"
   ],
   "regions": [
-    "us",
-    "elsewhere"
+    "us"
   ],
   "multi_tenant": "no",
   "answered_on": "2026-10-21"

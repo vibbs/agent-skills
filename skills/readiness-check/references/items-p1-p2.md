@@ -48,7 +48,8 @@ Queries · Serverless Limits · Server-Sent Events · Alerts · Reverse Proxies 
 Handling · Tenant Isolation · Prompt Injection · LLM Token Budgets
 P2 L3: Idempotency · SSRF
 Pulled by overrides: Rate Limiting (P3) · Pessimistic Locking (P3) · Audit Logs (P4-B2B)
-· GDPR & Privacy (P4-B2C) · Accessibility (WCAG 2.1 AA) (P4-B2C)
+· GDPR & Privacy (P4-B2C) · Accessibility (WCAG 2.1 AA) (P4-B2C) · Data Residency
+(P4-B2B)
 Then: done-early signals for later-phase items.
 
 ---
@@ -600,7 +601,7 @@ Fix prompt: "Put <Caddy> in front of <app service> in <compose file> for TLS and
 compression, and stop publishing <port> publicly."
 
 ### PII Handling
-`P2 · L2 · Compliance · risk 1 · repo + confirm` · pulled by health data, kids, Indian users
+`P2 · L2 · Compliance · risk 1 · repo + confirm` · pulled by health data, kids, Indian users, privacy-law regions
 Applies: *(derived)* the app stores personal data
 Why: Collect less, keep it out of logs, know where it lives.
 Look for: personal fields in schema (email, phone, address, date of birth, government
@@ -717,8 +718,9 @@ Fix prompt: "Add an append-only audit_log table (actor, action, target, ip, at) 
 to it from <payment | record-access handlers>."
 
 ### GDPR & Privacy
-`P4-B2C · L2 · Compliance · risk 1 · repo + confirm` · pulled by EU users
-Why: Consent, export and deletion at consumer scale.
+`P4-B2C · L2 · Compliance · risk 1 · repo + confirm` · pulled by EU users, privacy-law regions
+Why: Consent, export and deletion at consumer scale. The checks are the same for UK GDPR,
+LGPD, PIPEDA, CCPA/CPRA and similar laws; name the law that pulled it.
 Look for: privacy policy page, cookie consent banner (only needed for non-essential
 cookies / analytics), account deletion and data export routes, analytics configured
 without PII, DPAs with processors (confirm).
@@ -739,6 +741,22 @@ check; a manual audit is still needed (confirm). Red = clear violations in code 
 file:line).
 Fix prompt: "Add eslint-plugin-jsx-a11y and an axe check in <tests>, then fix the missing
 labels and alt text it reports in <components>."
+
+### Data Residency
+`P4-B2B · L3 · Compliance · risk 1 · repo + confirm` · pulled by data-localisation regions
+Why: Customers require their data kept in their region; some countries' laws may too.
+Look for: where personal data is stored and processed: hosting and database regions in
+`vercel.json` (`regions`), `fly.toml` (`primary_region`), Terraform / CDK region
+settings, `AWS_REGION` or similar in config, a Supabase or managed-database region noted
+in docs or env examples; third parties that receive personal data (analytics, LLM
+providers, email) and where they process it.
+Status: green = storage region confirmed for the country that requires it (cite config,
+or "confirmed by you"). Amber = region unknown from the repo, or personal data goes to a
+third party outside the country (confirm what applies). Never red from the repo alone:
+whether data may leave depends on facts outside it.
+Fix prompt: "List every place <app> stores or sends personal data of users in <country>
+(<database>, <analytics>, <LLM provider>) with its region, and draft the options for
+keeping it in <country> or covering the transfer, for review with a lawyer."
 
 ---
 

@@ -1608,6 +1608,25 @@
       ],
       "to": "P2",
       "extra": "Consent notices, breach reporting and children's-data rules apply from 13 May 2027."
+    },
+    {
+      "key": "Privacy-law regions",
+      "law": "UK GDPR · LGPD (Brazil) · PIPEDA (Canada) · CCPA/CPRA (California) and similar",
+      "pulls": [
+        "GDPR & Privacy",
+        "PII Handling"
+      ],
+      "to": "P2",
+      "extra": "Most comprehensive privacy laws ask for the same engineering: a privacy notice, a lawful basis or consent, and access, export and deletion paths."
+    },
+    {
+      "key": "Data-localisation regions",
+      "law": "PIPL (China) · Russian personal-data localisation law and similar",
+      "pulls": [
+        "Data Residency"
+      ],
+      "to": "P2",
+      "extra": "Some countries require personal data to be stored in the country, or a formal assessment or contract before it leaves; where your database runs is a launch decision."
     }
   ]
 }

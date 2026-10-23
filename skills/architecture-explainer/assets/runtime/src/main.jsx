@@ -13,4 +13,6 @@ s.textContent = `
 `;
 document.head.appendChild(s);
 
+document.title = SPEC.meta.title;
+
 render(<Root spec={SPEC} />, document.getElementById("app"));

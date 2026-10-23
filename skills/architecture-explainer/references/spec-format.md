@@ -18,6 +18,28 @@ export const SPEC = {
 
 ---
 
+## meta — title, byline and date
+
+```js
+meta: {
+  title:    "How an LLM Evaluation Pipeline Actually Works",
+  subtitle: "A new model candidate lands on Monday. By Friday you either ship it or you don't.",
+  author:   "Jane Doe",
+  updated:  "2026-07-14",
+}
+```
+
+- `title` — **required.** The page heading and the browser tab title.
+- `subtitle` — one or two sentences under the title.
+- `author` — optional. Shown as "By <author>" under the subtitle. Use the person or team
+  the user names; ask if unsure, never make one up.
+- `updated` — **required.** The date the explainer was last true to the system, shown as
+  "Updated <date>" under the subtitle. Use the build date (`YYYY-MM-DD`) unless the user
+  gives another. The linter fails the build without it: an architecture diagram with no
+  date cannot tell a reader whether it is still accurate.
+
+---
+
 ## personas — resolution policy, not a filter
 
 A persona does not hide parts of the system. It changes *vocabulary*, *collapse depth*,

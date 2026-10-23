@@ -425,6 +425,9 @@ function Header({ spec, right }) {
       <div>
         <h1>{spec.meta.title}</h1>
         <p>{spec.meta.subtitle}</p>
+        <p class="byline">
+          {spec.meta.author && <>By {spec.meta.author} · </>}Updated {spec.meta.updated}
+        </p>
       </div>
       {right}
     </header>

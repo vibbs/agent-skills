@@ -72,8 +72,10 @@ Depth is rarely the interesting one. Ask what the diagram is *for*:
 node / edge / beat reference with every optional field.
 
 Copy `assets/runtime/specs/llm-eval.js` as the worked example — it exercises every feature
-and is a good shape to imitate. Write the new spec to `specs/<name>.js`, then point
-`src/spec.js` at it (one line — the entry point and the linter both read it through there).
+and is a good shape to imitate. Set `meta.updated` to today's date (`YYYY-MM-DD`) and
+`meta.author` to whoever the user names; the linter requires the date. Write the new spec
+to `specs/<name>.js`, then point `src/spec.js` at it (one line — the entry point and the
+linter both read it through there).
 
 ### 4. Build
 
@@ -81,9 +83,16 @@ Copy `assets/runtime` to a working directory first and build there. Do not run
 `npm install` inside the installed skill folder — it is often a shared or symlinked
 install location.
 
+Use one folder per explainer, named after it: `./explainer-<slug>`, where `<slug>` is the
+title in lowercase, each run of non-alphanumerics replaced by `-`, no leading or trailing
+`-`. If an `explainer-*` folder from an earlier explainer already exists in this project,
+reuse its runtime instead of copying again: add the new spec to its `specs/`, point
+`src/spec.js` at it, and build. Never copy into an existing folder — `cp -R` would nest
+the runtime inside it.
+
 ```bash
-cp -R <skill-dir>/assets/runtime ./explainer
-cd explainer
+cp -R <skill-dir>/assets/runtime ./explainer-<slug>   # only if no explainer folder exists yet
+cd explainer-<slug>
 npm install            # needs network; ~20s
 npm run build          # lints the spec first, then emits dist/index.html
 ```
@@ -117,8 +126,18 @@ If something looks wrong, read `references/troubleshooting.md` before changing l
 
 ### 6. Deliver
 
-Give the user the built `dist/index.html`. Tell them the file is self-contained and can
-be hosted, embedded, or opened offline.
+Every build writes `dist/index.html`, so the next build overwrites it. Copy it to a dated,
+named file and give the user that copy, never `dist/index.html` itself:
+
+```bash
+out="<slug>-$(date +%Y-%m-%d).html"; n=2
+while [ -e "$out" ]; do out="<slug>-$(date +%Y-%m-%d)-$n.html"; n=$((n+1)); done
+cp dist/index.html "$out"
+```
+
+The copy lives in the explainer folder next to `dist/`; earlier builds stay as they were.
+Tell the user the file name, that the page shows the date and author under the title, and
+that the file is self-contained and can be hosted, embedded, or opened offline.
 
 > **Claude Code / Claude apps only.** Send the file with `SendUserFile`. If it's something
 > the user will revisit — most explainers are — also persist it with `create_artifact`.

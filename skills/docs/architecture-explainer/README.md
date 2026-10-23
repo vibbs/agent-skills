@@ -41,13 +41,13 @@ spec: How an LLM Evaluation Pipeline Actually Works
   45 distinct projections from one topology
 
 lint passed
-dist/index.html  173.87 kB │ gzip: 90.76 kB
+dist/index.html  174.21 kB │ gzip: 90.98 kB
 
 $ cp dist/index.html how-an-llm-evaluation-pipeline-actually-works-2026-07-14.html
 ```
 
-Each explainer gets its own working folder, `explainer-<slug>/`; a second explainer in
-the same project reuses that runtime with a new spec.
+All explainers in a project share one working folder, `architecture-explainers/`; each
+new explainer adds a spec to its `specs/` and reuses the installed runtime.
 
 ## Requirements
 
@@ -55,10 +55,10 @@ the same project reuses that runtime with a new spec.
 - Playwright with a Chromium browser for the screenshot check
   (`npx playwright install chromium`).
 
-Known issue: on npm 11.5, `npm install` can fail with
-`Cannot read properties of null (reading 'edgesOut')` while resolving
-`@preact/preset-vite`'s peer dependencies. `npm install --legacy-peer-deps` works around
-it; npm 12 is not affected.
+The runtime's `package.json` pins Vite with `overrides`, which avoids an npm 11 crash
+(`Cannot read properties of null (reading 'edgesOut')`) while resolving peer
+dependencies, so a plain `npm install` works. If it still fails on your npm,
+`npm install --legacy-peer-deps` is the fallback.
 
 In the Claude web and desktop apps (skill uploaded as a ZIP), the build runs in Claude's
 code execution sandbox. This is untested: `npm install` needs access to the npm registry,
@@ -73,5 +73,5 @@ All live in `assets/runtime/scripts/` and run only when the agent or you invoke 
 | Script | What it does |
 |---|---|
 | `lint.mjs` | Checks the spec (beats, `why` on every node, lens coverage). Runs before every build. |
-| `shots.mjs` | Opens the built file in headless Chromium and writes screenshots to `shots/`. |
+| `shots.mjs` | Opens the built file in headless Chromium, screenshots a matrix derived from the spec (beats, persona × era, lenses, phone) to `shots/`, and fails on page errors or overflowing labels. |
 | `fonts.mjs` | Maintainer only. Re-subsets the bundled fonts with `pyftsubset` and regenerates `src/fonts.gen.js`. Not needed to build an explainer. |

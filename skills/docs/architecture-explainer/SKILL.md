@@ -74,7 +74,7 @@ node / edge / beat reference with every optional field.
 Copy `assets/runtime/specs/llm-eval.js` as the worked example — it exercises every feature
 and is a good shape to imitate. Set `meta.updated` to today's date (`YYYY-MM-DD`) and
 `meta.author` to whoever the user names; the linter requires the date. Write the new spec
-to `specs/<name>.js`, then point `src/spec.js` at it (one line — the entry point and the
+to `specs/<slug>.js` (see step 4), then point `src/spec.js` at it (one line — the entry point and the
 linter both read it through there).
 
 ### 4. Build
@@ -83,19 +83,24 @@ Copy `assets/runtime` to a working directory first and build there. Do not run
 `npm install` inside the installed skill folder — it is often a shared or symlinked
 install location.
 
-Use one folder per explainer, named after it: `./explainer-<slug>`, where `<slug>` is the
-title in lowercase, each run of non-alphanumerics replaced by `-`, no leading or trailing
-`-`. If an `explainer-*` folder from an earlier explainer already exists in this project,
-reuse its runtime instead of copying again: add the new spec to its `specs/`, point
-`src/spec.js` at it, and build. Never copy into an existing folder — `cp -R` would nest
-the runtime inside it.
+Use one shared runtime folder per project, `./architecture-explainers`, holding every
+explainer's spec side by side in `specs/`. If it already exists, do not copy again — `cp -R`
+into an existing folder would nest the runtime inside it. Just add the new spec, point
+`src/spec.js` at it, and build. `<slug>` below is the title in lowercase, each run of
+non-alphanumerics replaced by `-`, no leading or trailing `-`; name the spec
+`specs/<slug>.js`.
 
 ```bash
-cp -R <skill-dir>/assets/runtime ./explainer-<slug>   # only if no explainer folder exists yet
-cd explainer-<slug>
-npm install            # needs network; ~20s
-npm run build          # lints the spec first, then emits dist/index.html
+[ -d architecture-explainers ] || cp -R <skill-dir>/assets/runtime ./architecture-explainers
+cd architecture-explainers
+npm install                          # needs network; ~20s; first time only
+npx playwright install chromium      # needed by step 5; first time only
+npm run build                        # lints the spec first, then emits dist/index.html
 ```
+
+`package.json` pins Vite through `overrides`, which is what lets a plain `npm install`
+work on npm 11. If install still fails resolving peer dependencies, retry with
+`npm install --legacy-peer-deps`.
 
 The lint output tells you the projection count. If it fails, **fix the spec — never
 weaken the linter.** Every rule it enforces exists because a real diagram shipped
@@ -108,10 +113,14 @@ and failures are silent: a clipped label, an edge routed through five boxes, a c
 frames empty space. **Do not declare done without looking.**
 
 ```bash
-node scripts/shots.mjs        # desktop matrix → shots/
+node scripts/shots.mjs        # needs Chromium (see step 4) → shots/
 ```
 
-Then screenshot at phone size yourself (390×844) and open and inspect the images. Check:
+The matrix is derived from your spec: every beat in Read mode, every persona × era on the
+base lens, each other lens once, Present mode, and Read and Present at phone size
+(390×844). Each shot loads fresh. The script fails on any page error, on a label wider
+than its box, or on a page wider than the viewport. Passing is necessary, not sufficient:
+open and inspect the images. Check:
 
 - **Every persona × era combination** renders without overlap or clipping.
 - **Each lens** actually changes the picture — if two lenses look identical, their edge
@@ -135,12 +144,13 @@ while [ -e "$out" ]; do out="<slug>-$(date +%Y-%m-%d)-$n.html"; n=$((n+1)); done
 cp dist/index.html "$out"
 ```
 
-The copy lives in the explainer folder next to `dist/`; earlier builds stay as they were.
+The copy lives in the runtime folder next to `dist/`; earlier builds stay as they were.
 Tell the user the file name, that the page shows the date and author under the title, and
 that the file is self-contained and can be hosted, embedded, or opened offline.
 
-> **Claude Code / Claude apps only.** Send the file with `SendUserFile`. If it's something
-> the user will revisit — most explainers are — also persist it with `create_artifact`.
+> **Claude Code / Claude apps only.** Hand the dated file to the user with whatever
+> file-sharing tool the session offers. If they will revisit it — most explainers are —
+> and the session has the `Artifact` tool, also publish it there.
 
 ## Non-negotiables
 
@@ -152,11 +162,15 @@ that the file is self-contained and can be hosted, embedded, or opened offline.
 
 ## Adapting
 
-- **Different visual direction** — `src/themes.js` holds five (`house`, `swiss`,
-  `editorial`, `draft`, `shadcn`). Change `THEME_ID` in `src/App.jsx`. If you add a
-  typeface you **must** set `metrics.charFactor` correctly or every label clips; see
+- **Different visual direction** — `src/themes.js` holds six (`house`, `swiss`,
+  `editorial`, `draft`, `warm`, `shadcn`). Change `THEME_ID` at the top of that file; the
+  build inlines exactly the faces the theme's font stacks lead with. Bundled faces are
+  listed in `FACES` there (Archivo, Newsreader, Instrument Sans, Inter, JetBrains Mono). A
+  new typeface needs an entry in `FACES` and in `scripts/fonts.mjs`, a regenerated `src/fonts.gen.js`
+  (`npm run fonts`), and a measured `metrics.charFactor` or every label clips; see
   `references/troubleshooting.md`.
-- **More personas / lenses / eras** — pure spec data, no code changes.
+- **More personas / lenses / eras** — pure spec data, no code changes. A lens's colour is
+  its spec `accent` if set, else the theme's palette entry for its id, else ink.
 - **Generating from source** — a script that walks a repo and emits the `DIAGRAM` tree is a
   reasonable extension, but the `why`, `detail` and beats still have to come from a human.
 

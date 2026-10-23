@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "preact/hooks"
 import Diagram from "./Diagram.jsx";
 import { project } from "./core.js";
 import { nodeShape, KIND_SHAPES } from "./shapes.js";
-import { resolveTheme, applyTheme } from "./themes.js";
+import { resolveTheme, applyTheme, lensAccent, THEME_ID } from "./themes.js";
 import { ThemeCtx, useTheme } from "./ctx.js";
 
 /* ── URL state ─────────────────────────────────────────────────────────── */
@@ -162,6 +162,8 @@ function Legend({ lensDef, eraDef, personaDef, accent }) {
 }
 
 /* ── explainer ─────────────────────────────────────────────────────────── */
+const MODES = ["read", "explore", "present"];
+
 function Explainer({ spec, colour, setColour }) {
   const th = useTheme();
   const narrow = useMedia("(max-width: 760px)");
@@ -177,12 +179,15 @@ function Explainer({ spec, colour, setColour }) {
   // of the system and let the reader pan, rather than an unreadable whole.
   const minScale = narrow ? 0.85 : shortViewport ? 0.82 : 0.78;
   const init = readHash();
-  const [mode, setMode] = useState(init.mode || "read");
+  // Deep links outlive specs: an id that no longer exists is dropped, not
+  // trusted, so an old link opens the tour instead of a blank page.
+  const known = (list, id) => (list.some((x) => x.id === id) ? id : null);
+  const [mode, setMode] = useState(MODES.includes(init.mode) ? init.mode : "read");
   const [beat, setBeat] = useState(Math.max(0, Math.min(spec.beats.length - 1, +init.beat || 0)));
   const [ov, setOv] = useState({
-    persona: init.persona || null,
-    lens: init.lens || null,
-    era: init.era || null,
+    persona: known(spec.personas, init.persona),
+    lens: known(spec.lenses, init.lens),
+    era: known(spec.eras, init.era),
   });
   const [hoverId, setHoverId] = useState(null);
   const [showKey, setShowKey] = useState(false);
@@ -196,20 +201,24 @@ function Explainer({ spec, colour, setColour }) {
     if (narrow && mode === "explore") setMode("read");
   }, [narrow, mode]);
 
-  // Phones open at tier level whatever the beat asks for: engineer-level
-  // detail is unreadable at this width, and an explicit tap can still go deeper.
+  // Phones open at the shallowest persona whatever the beat asks for:
+  // engineer-level detail is unreadable at this width, and an explicit tap
+  // can still go deeper. Every slot falls back to an id the spec defines.
+  const shallowest = spec.personas.reduce((a, p) => (p.depth < a.depth ? p : a)).id;
+  const pick = (list, want) => known(list, want) || list[0].id;
   const sel = {
     persona:
-      ov.persona || (narrow ? "exec" : inTour ? beatObj.persona : spec.personas[1].id),
-    lens: ov.lens || (inTour ? beatObj.lens : spec.lenses[0].id),
-    era: ov.era || (inTour ? beatObj.era : spec.defaultEra),
+      ov.persona ||
+      pick(spec.personas, narrow ? shallowest : inTour ? beatObj.persona : (spec.personas[1] || {}).id),
+    lens: ov.lens || pick(spec.lenses, inTour ? beatObj.lens : null),
+    era: ov.era || pick(spec.eras, inTour ? beatObj.era : spec.defaultEra),
   };
   const focus = ov.persona || ov.lens || ov.era ? [] : inTour ? beatObj.focus || [] : [];
 
   const personaDef = spec.personas.find((p) => p.id === sel.persona);
   const lensDef = spec.lenses.find((l) => l.id === sel.lens);
   const eraDef = spec.eras.find((e) => e.id === sel.era);
-  const accent = th.c.lens[sel.lens] || th.c.ink;
+  const accent = lensAccent(th, lensDef);
 
   useEffect(() => {
     writeHash({ mode, beat: inTour ? beat : null, colour: th.mode, ...ov });
@@ -381,9 +390,10 @@ function Explainer({ spec, colour, setColour }) {
               <div class="beat-meta">
                 <span>{String(i + 1).padStart(2, "0")}</span>
                 <span>{spec.personas.find((p) => p.id === b.persona).label}</span>
-                <span style={{ color: th.c.lens[b.lens] }}>
-                  {spec.lenses.find((l) => l.id === b.lens).label}
-                </span>
+                {(() => {
+                  const l = spec.lenses.find((x) => x.id === b.lens);
+                  return <span style={{ color: lensAccent(th, l) }}>{l.label}</span>;
+                })()}
               </div>
               <h2>{b.title}</h2>
               {b.prose.split("\n\n").map((p, j) => <p key={j}>{p}</p>)}
@@ -435,7 +445,6 @@ function Header({ spec, right }) {
 }
 
 /* ── root ──────────────────────────────────────────────────────────────── */
-export const THEME_ID = "house";
 
 export default function Root({ spec }) {
   const init = readHash();

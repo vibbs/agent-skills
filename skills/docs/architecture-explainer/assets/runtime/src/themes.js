@@ -9,7 +9,29 @@
  * build only carries the typefaces its theme actually uses.
  */
 
+/** The one theme this build uses. vite.config.js reads it to inline its faces. */
+export const THEME_ID = "house";
+
 const SANS = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+
+/**
+ * Every bundled face: CSS family name → named export in fonts.gen.js. A theme
+ * may only lead a font stack with one of these; anything else falls back to a
+ * system font whose widths charFactor was not measured for.
+ */
+export const FACES = {
+  Archivo: { file: "archivo", weight: "100 900" },
+  Newsreader: { file: "newsreader", weight: "200 800" },
+  InstrumentSans: { file: "instrument", weight: "400 700" },
+  InterVar: { file: "inter", weight: "100 900" },
+  JetBrainsMono: { file: "mono", weight: "100 800" },
+};
+
+/** The bundled faces a theme's font stacks lead with, deduplicated. */
+export function themeFaces(t) {
+  const fams = new Set(Object.values(t.font).map((f) => f.split(",")[0].trim()));
+  return [...fams].filter((f) => FACES[f]).map((f) => ({ family: f, ...FACES[f] }));
+}
 
 export const THEMES = [
   /* ─────────────────────────────────────────────────────────────────────── */
@@ -177,6 +199,16 @@ export function resolveTheme(id, mode) {
   const m = t.modes[mode] || t.modes.light;
   // the figure may sit on a different surface than the page it's printed on
   return { ...t, mode, c: { ...m, stage: m.stage || m.bg } };
+}
+
+/**
+ * A lens's colour. The spec's `accent` (a colour, or { light, dark }) wins so a
+ * new lens needs no theme edit; otherwise the theme's tuned palette, then ink.
+ */
+export function lensAccent(th, lensDef) {
+  const a = lensDef && lensDef.accent;
+  const own = typeof a === "string" ? a : a && (a[th.mode] || a.light);
+  return own || (lensDef && th.c.lens[lensDef.id]) || th.c.ink;
 }
 
 /** Push tokens into CSS custom properties so stylesheet rules can use them. */

@@ -1,7 +1,8 @@
 # Spec format
 
 A spec is a plain JS module exporting `SPEC`. It is the *only* thing you author —
-the runtime never needs editing to build a new explainer.
+the runtime never needs editing to build a new explainer, whatever its personas, lenses
+and eras.
 
 ```js
 export const SPEC = {
@@ -9,7 +10,7 @@ export const SPEC = {
   personas:   [ … ],   // who is reading
   lenses:     [ … ],   // which concern
   eras:       [ … ],   // when
-  defaultEra: "today",
+  defaultEra: "today",  // era Explore opens on; omitted = the first era (warns)
   root:       { … },   // the topology
   edges:      [ … ],
   beats:      [ … ],   // the narrative
@@ -59,17 +60,20 @@ personas: [
 
 - `depth` — how many levels of nesting expand. 1 = tiers only.
 - `facts` — which fact keys the hover panel shows, in order.
-- An `exec` persona is special: the linter requires exec-level `detail` on everything
-  visible at its depth.
+- An `exec` persona is special: when the spec has one, the linter requires exec-level
+  `detail` on everything visible to it. Specs without one skip that check.
+- On phones the reader starts at the persona with the smallest `depth`.
 
 ## lenses — a concern overlay
 
 ```js
 lenses: [
-  { id: "flow",    label: "Data flow",  blurb: "…", fact: null,         accent: "#0F0D0A" },
-  { id: "cost",    label: "Cost",       blurb: "…", fact: "cost",       accent: "#A96C00" },
-  { id: "trust",   label: "Governance", blurb: "…", fact: "governance", accent: "#006647" },
-  { id: "failure", label: "Failure",    blurb: "…", fact: "risk",       accent: "#C22A16" },
+  { id: "flow",    label: "Data flow",  blurb: "…", fact: null },
+  { id: "cost",    label: "Cost",       blurb: "…", fact: "cost" },
+  { id: "trust",   label: "Governance", blurb: "…", fact: "governance" },
+  { id: "failure", label: "Failure",    blurb: "…", fact: "risk" },
+  { id: "latency", label: "Latency",    blurb: "…", fact: "runtime",
+    accent: { light: "#7A3FB0", dark: "#C49BEA" } },
 ]
 ```
 
@@ -77,8 +81,10 @@ lenses: [
   dashed ghost layer, so the topology never disappears — a lens re-weights the picture,
   it does not delete it.
 - `fact` — the fact key each node advertises as a chip when this lens is active.
-- `accent` — **theme-specific**; the shipped value lives in `src/themes.js` under
-  `modes.light.lens` / `modes.dark.lens`. Add a colour there for any new lens id.
+- `accent` — optional. A colour string, or `{ light, dark }` for the two reader modes. If
+  set it wins; otherwise the theme's tuned palette is used for the ids it knows (`flow`,
+  `cost`, `trust`, `failure`, `ownership`, in `src/themes.js`), and any other lens falls
+  back to the ink colour. Prefer leaving the known ids to the theme.
 - A lens with no edges fails the build. A lens that annotates fewer than four nodes warns.
 
 ## eras
@@ -107,7 +113,7 @@ Nodes that don't exist in `today` render with a dashed outline and a PLANNED tag
   kind: "process",              // source | process | store | human | gate | group
   cols: 3,                      // children per row (nodes with children only)
   eras: ["today", "next"],      // omit = every era
-  collapseFor: ["exec"],        // personas that see the parent instead of this node
+  collapseFor: ["exec"],        // personas that see this node closed, children hidden
 
   label: {                      // per-persona vocabulary
     default:   "Hybrid Retriever",
@@ -201,8 +207,11 @@ Beats are narrated selector states. The same beats drive Read mode (scroll), Pre
 Rules the linter enforces:
 
 - `prose` under 80 characters fails — a beat that thin is a caption, not an argument.
-- `focus` may not name a node the beat's own persona collapses away, or one that doesn't
-  exist in the beat's era.
+- `focus` may not name a node the beat's own persona collapses away — deeper than its
+  `depth`, or inside an ancestor whose `collapseFor` names it — or one that doesn't exist
+  in the beat's era.
+- `defaultEra`, if given, must be a declared era. Missing `personas`, `lenses`, `eras`,
+  `edges` or `root.children` are reported as lint errors.
 - Zero beats fails the build outright.
 
 Guidance that isn't enforced but matters:

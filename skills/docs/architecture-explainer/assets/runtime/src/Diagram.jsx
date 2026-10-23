@@ -16,6 +16,7 @@ import {
 } from "./core.js";
 import { nodeShape } from "./shapes.js";
 import { useTheme } from "./ctx.js";
+import { lensAccent } from "./themes.js";
 
 const DUR = 520;
 const CAM_DUR = 640;
@@ -328,7 +329,7 @@ export default function Diagram({ spec, sel, focus, onHoverNode, hoverId, compac
   const wrapRef = useRef(null);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
   const frame = useAnimatedFrame(spec, sel, th.metrics.charFactor, maxCols);
-  const accent = c.lens[sel.lens] || c.ink;
+  const accent = lensAccent(th, spec.lenses.find((l) => l.id === sel.lens));
 
   useLayoutEffect(() => {
     const el = wrapRef.current;

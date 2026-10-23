@@ -1,34 +1,69 @@
+/**
+ * Screenshot matrix + geometry check for the built file.
+ *
+ * Everything is derived from the spec being built (src/spec.js), so any
+ * persona / lens / era / beat set works — nothing here names the example.
+ */
 import { chromium } from "playwright";
 import path from "path";
 import fs from "fs";
+import { SPEC } from "../src/spec.js";
 
 const file = "file://" + path.resolve("dist/index.html");
 const out = "shots";
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 
-const shots = [
-  ["01-read-default", "#mode=read&beat=0", 1600, 1000],
-  ["02-read-inputs", "#mode=read&beat=1", 1600, 1000],
-  ["03-read-trust-lens", "#mode=read&beat=2", 1600, 1000],
-  ["04-read-exec-cost", "#mode=read&beat=5", 1600, 1000],
-  ["05-read-scoring-engineer", "#mode=read&beat=6", 1600, 1000],
-  ["06-read-failure", "#mode=read&beat=7", 1600, 1000],
-  ["07-read-v0", "#mode=read&beat=9", 1600, 1000],
-  ["08-read-next", "#mode=read&beat=10", 1600, 1000],
-  ["09-explore-architect-flow", "#mode=explore&persona=architect&lens=flow&era=today", 1600, 1000],
-  ["10-explore-engineer-flow", "#mode=explore&persona=engineer&lens=flow&era=today", 1600, 1000],
-  ["11-explore-exec-cost", "#mode=explore&persona=exec&lens=cost&era=today", 1600, 1000],
-  ["12-explore-architect-ownership", "#mode=explore&persona=architect&lens=ownership&era=today", 1600, 1000],
-  ["13-explore-engineer-trust", "#mode=explore&persona=engineer&lens=trust&era=today", 1600, 1000],
-  ["14-explore-v0", "#mode=explore&persona=architect&lens=flow&era=v0", 1600, 1000],
-  ["15-explore-next", "#mode=explore&persona=architect&lens=flow&era=next", 1600, 1000],
-  ["16-present", "#mode=present&beat=4", 1600, 1000],
-  ["17-mobile-read", "#mode=read&beat=1", 430, 900],
-];
+const P = SPEC.personas.map((p) => p.id);
+const L = SPEC.lenses.map((l) => l.id);
+const E = SPEC.eras.map((e) => e.id);
+const base = L[0];
+const mid = P[Math.min(1, P.length - 1)];
+const era0 = E.includes(SPEC.defaultEra) ? SPEC.defaultEra : E[0];
+const nn = (i) => String(i).padStart(2, "0");
+const DESK = [1600, 1000];
+const PHONE = [390, 844];
+
+const shots = [];
+const add = (name, hash, [w, h]) => shots.push([`${nn(shots.length + 1)}-${name}`, hash, w, h]);
+// every beat in Read mode, then every persona × era on the base lens, then
+// every other lens once, then the two phone shells
+SPEC.beats.forEach((b, i) => add(`read-${b.id}`, `#mode=read&beat=${i}`, DESK));
+for (const p of P)
+  for (const e of E) add(`explore-${p}-${base}-${e}`, `#mode=explore&persona=${p}&lens=${base}&era=${e}`, DESK);
+for (const l of L.slice(1)) add(`explore-${mid}-${l}-${era0}`, `#mode=explore&persona=${mid}&lens=${l}&era=${era0}`, DESK);
+const midBeat = Math.min(4, SPEC.beats.length - 1);
+add("present", `#mode=present&beat=${midBeat}`, DESK);
+add("phone-read", `#mode=read&beat=${Math.min(1, SPEC.beats.length - 1)}`, PHONE);
+add("phone-present", `#mode=present&beat=${midBeat}`, PHONE);
+
+/**
+ * Runs in the page. Reports label text that spills out of its own box (the
+ * symptom of a wrong charFactor or a missing @font-face) and a page wider
+ * than the viewport (the symptom of a nowrap row escaping its column).
+ */
+function measure() {
+  const problems = [];
+  const boxes = document.querySelectorAll('.diagram svg g[style*="cursor"]');
+  for (const g of boxes) {
+    const shape = g.querySelector(":scope > path");
+    if (!shape) continue;
+    const r = shape.getBBox();
+    for (const t of g.querySelectorAll(":scope > text")) {
+      const b = t.getBBox();
+      if (b.x < r.x - 1 || b.x + b.width > r.x + r.width + 1)
+        problems.push(`label "${t.textContent}" overflows its box by ${Math.ceil(Math.max(r.x - b.x, b.x + b.width - r.x - r.width))}px`);
+    }
+  }
+  const sw = document.documentElement.scrollWidth;
+  if (sw > innerWidth + 1) problems.push(`page is ${sw}px wide in a ${innerWidth}px viewport`);
+  return { boxes: boxes.length, problems };
+}
 
 const errors = [];
+const report = [];
 const browser = await chromium.launch();
+// The app reads the hash once at startup, so every shot gets a fresh page.
 for (const [name, hash, w, h] of shots) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2 });
   const page = await ctx.newPage();
@@ -37,7 +72,8 @@ for (const [name, hash, w, h] of shots) {
     if (m.type() === "error") errors.push(`${name}: console ${m.text()}`);
   });
   await page.goto(file + hash);
-  await page.waitForTimeout(1500);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(1200);
   // scroll the prose so the active beat is centred in read mode
   if (hash.includes("mode=read")) {
     const beat = +(/beat=(\d+)/.exec(hash) || [, 0])[1];
@@ -45,32 +81,21 @@ for (const [name, hash, w, h] of shots) {
       const s = document.querySelectorAll(".prose section")[b];
       if (s) s.scrollIntoView({ block: "center" });
     }, beat);
-    await page.waitForTimeout(1400);
+    await page.waitForTimeout(1200);
   }
   await page.screenshot({ path: `${out}/${name}.png` });
+  const m = await page.evaluate(measure);
+  if (!m.boxes) errors.push(`${name}: no node boxes rendered`);
+  m.problems.forEach((p) => errors.push(`${name}: ${p}`));
+  report.push(`${name.padEnd(44)} ${m.boxes} boxes`);
   await ctx.close();
-}
-
-// geometry sanity check: nothing may overflow its parent group
-const ctx = await browser.newContext({ viewport: { width: 1600, height: 1000 } });
-const page = await ctx.newPage();
-const report = [];
-for (const persona of ["exec", "architect", "engineer"]) {
-  for (const era of ["v0", "today", "next"]) {
-    await page.goto(`${file}#mode=explore&persona=${persona}&lens=flow&era=${era}`);
-    await page.waitForTimeout(900);
-    const n = await page.evaluate(() => document.querySelectorAll(".diagram svg g rect").length);
-    const edges = await page.evaluate(
-      () => document.querySelectorAll(".diagram svg > g > g > path").length
-    );
-    report.push(`${persona}/${era}: ${n} rects, ${edges} edge paths`);
-  }
 }
 await browser.close();
 
 console.log(report.join("\n"));
+console.log(`\n${shots.length} shots → ${out}/`);
 if (errors.length) {
-  console.log("\nPAGE ERRORS:\n" + errors.join("\n"));
+  console.log("\nPROBLEMS:\n" + errors.join("\n"));
   process.exit(1);
 }
-console.log("\nno page errors");
+console.log("no page errors, no label or page overflow");

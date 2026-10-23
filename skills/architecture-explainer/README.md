@@ -18,9 +18,9 @@ an architecture you did not describe.
 ## Example output
 
 The agent writes a spec like this (excerpt from the bundled worked example,
-`assets/runtime/specs/llm-eval.js`) and builds it. The page shows the spec's title in the browser tab and "By <author> ·
-Updated <date>" under the subtitle; the linter fails a spec with no `meta.updated`. Each
-build is copied to `<slug-of-title>-<YYYY-MM-DD>.html` (with `-2`, `-3` if that name is
+`assets/runtime/specs/llm-eval.js`) and builds it. The page shows the spec's title in the
+browser tab and "By <author> · Updated <date>" under the subtitle; the linter fails a spec
+with no `meta.updated`. Each build is copied to `<slug-of-title>-<YYYY-MM-DD>.html` (with `-2`, `-3` if that name is
 taken), so a second build never overwrites the first:
 
 ```js

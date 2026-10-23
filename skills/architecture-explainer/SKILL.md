@@ -85,9 +85,10 @@ install location.
 
 Use one folder per explainer, named after it: `./explainer-<slug>`, where `<slug>` is the
 title in lowercase, each run of non-alphanumerics replaced by `-`, no leading or trailing
-`-`. If an `explainer-*` folder from an earlier explainer already exists in this project, reuse its
-runtime instead of copying again: add the new spec to its `specs/`, point `src/spec.js` at
-it, and build. Never copy into an existing folder — `cp -R` would nest the runtime inside it.
+`-`. If an `explainer-*` folder from an earlier explainer already exists in this project,
+reuse its runtime instead of copying again: add the new spec to its `specs/`, point
+`src/spec.js` at it, and build. Never copy into an existing folder — `cp -R` would nest
+the runtime inside it.
 
 ```bash
 cp -R <skill-dir>/assets/runtime ./explainer-<slug>   # only if no explainer folder exists yet

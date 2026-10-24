@@ -8,7 +8,7 @@ Skills live at `skills/<bucket>/<skill-name>/`:
 
 | Bucket | For |
 |---|---|
-| `operations/` | running a project in production |
+| `operations/` | running and maintaining a project |
 | `mcp/` | building MCP servers and connectors |
 | `docs/` | explaining a system to its readers |
 | `in-progress/` | beta skills; not in the plugin, the README table or `docs/` |

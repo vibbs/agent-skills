@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add a recipe</h1>
+<form method="post">
+  {{ form.csrf_token }}
+  {{ form.title.label }} {{ form.title() }}
+  {{ form.body.label }} {{ form.body(rows=12) }}
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

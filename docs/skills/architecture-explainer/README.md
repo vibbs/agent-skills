@@ -73,6 +73,6 @@ Claude Code users can install the whole collection as a plugin instead; see the
 
 ## Links
 
-- [Skill source](../../../skills/architecture-explainer/)
-- [Spec format reference](../../../skills/architecture-explainer/references/spec-format.md)
+- [Skill source](../../../skills/docs/architecture-explainer/)
+- [Spec format reference](../../../skills/docs/architecture-explainer/references/spec-format.md)
 - [Catalog](../../catalog.md)

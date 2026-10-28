@@ -8,6 +8,10 @@ Not shipped with the skill (only `skills/` goes into the plugin).
   - `fastapi-p1`: P1, just the builder. Hardcoded secret, no lockfile, no auth.
   - `p2-with-helm`: P2, B2B and multi-tenant, mostly in good shape, with Kubernetes and
     a Helm chart (done early).
+  - `flask-global-regions`: P2, B2C Flask app on Fly.io with users worldwide (`global`)
+    plus Brazil (`elsewhere`, `BR`). Shows region grouping: EU users, Indian users and
+    Privacy-law regions each apply once, pulling GDPR & Privacy, Accessibility and PII
+    Handling. Planted gaps: emails in logs, no account deletion, unlabelled sign-up inputs.
 - `answers/<name>.json`: the interview answers used for each run.
 - `expected/<name>/readiness-check.md`: the report the skill should produce, verdicts
   checked by hand. `nextjs-supabase-openai/readiness-check.second-run.md` is a second

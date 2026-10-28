@@ -2,7 +2,7 @@
 # Validate every skill in skills/ against the Agent Skills spec using the
 # official reference validator (skills-ref). Requires uv: https://docs.astral.sh/uv/
 #
-# Usage: scripts/validate.sh [skill-dir ...]   (defaults to all of skills/*/)
+# Usage: scripts/validate.sh [skill-dir ...]   (defaults to every skills/<bucket>/<skill>/)
 set -euo pipefail
 
 SKILLS_REF_VERSION="0.1.1"
@@ -12,8 +12,8 @@ if [ "$#" -gt 0 ]; then
   dirs=("$@")
 else
   dirs=()
-  for d in "$root"/skills/*/; do
-    [ -d "$d" ] && dirs+=("${d%/}")
+  for d in "$root"/skills/*/*/; do
+    [ -f "$d/SKILL.md" ] && dirs+=("${d%/}")
   done
 fi
 

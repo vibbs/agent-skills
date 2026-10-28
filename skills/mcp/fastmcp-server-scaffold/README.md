@@ -21,7 +21,7 @@ capability wave at a time.
 $ python3 scripts/scaffold.py --out ../acme-tickets --name acme-tickets --auth proxy \
     --repo acme/acme-tickets
 Wrote 74 files to ../acme-tickets
-  template 1.0.0 generated 2026-10-22; options recorded in .scaffold.json
+  template 1.1.0 generated 2026-10-28; options recorded in .scaffold.json
   auth=proxy transport=stdio+http with=-
 
 $ cd ../acme-tickets && uv lock && uv sync --extra dev && uv run pytest -q

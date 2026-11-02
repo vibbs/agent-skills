@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "optional_features": {
     "output-schema": "typed TypedDict return values, so tools advertise an outputSchema",
     "stateless": "stateless HTTP sessions, required for more than one replica",

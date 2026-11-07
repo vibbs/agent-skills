@@ -9,7 +9,7 @@ its `docs/skills/<name>/` page, not the block below.
 <!-- catalog:begin -->
 ## Operations
 
-Skills for running a project in production: knowing what it needs before it ships and as it grows.
+Skills for running and maintaining a project: knowing what it needs before it ships and as it grows, and keeping the codebase clean as it changes.
 
 ### readiness-check
 

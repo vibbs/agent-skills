@@ -64,6 +64,12 @@ Rules:
 - **Give every image alt text** that says what the preview shows.
 - **Use these exact file names.** The catalog script finds media by them.
 
+## Design docs
+
+Plans for skills not yet built live in `docs/plans/<topic>.md`. They are not part of the
+plugin or the catalog. When a planned skill ships, its overview page replaces the plan
+for that skill.
+
 ## Before opening a pull request
 
 Install [uv](https://docs.astral.sh/uv/), then:

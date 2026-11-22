@@ -43,7 +43,9 @@ source those copies are kept in sync with.
 - Find and run the project's checks: tests, type checker, linter, build. Record the
   commands and results.
 - If the baseline fails, or there are no tests that cover the area, switch to
-  **report-only mode**: write findings, change nothing, and say why.
+  **report-only mode**: write findings, change nothing, and say why. Skills that change
+  only comments and docs (`stale-docs-sync`) don't need test coverage; review is their
+  check.
 - Work on a fresh branch from a clean tree. Never on the default branch.
 
 ### 2. One kind of change, small
@@ -66,7 +68,9 @@ Each item in the report carries:
 
 - Public or exported API of a published package, and anything listed in an exports map,
   `__all__`, or a public index file
-- Generated code, vendored code, lock files, migrations
+- Generated code, vendored code, migrations
+- Lock files, except the update the package manager itself makes when
+  `unused-deps-prune` removes a dependency
 - Code reached by reflection, dynamic imports, string-based routing, dependency
   injection containers, decorators that register handlers, serializers, or framework
   conventions (for example `pages/`, `app/` routes, Django `admin.py`, test fixtures)
@@ -86,10 +90,12 @@ Each skill adds its own "looks dead but isn't" checklist in `references/`.
 
 In the user's project:
 
-- `cleanup-report.md`: what changed, what was skipped and why, what is left for next
+- `<skill-name>-report.md` (for example `dead-code-sweep-report.md`), one per skill so
+  two runs close together don't overwrite each other: what changed, what was skipped and why, what is left for next
   time, the baseline and after results, and the commit checked.
 - A ready-to-paste pull request title and description. The skill does not open the PR
-  or push unless the user asks.
+  or push unless the user asks. A scheduled workflow set up to open a PR counts as
+  asking (see [Scheduling](#scheduling)).
 
 ## Skill 1: `dead-code-sweep` (build first)
 
@@ -102,7 +108,7 @@ Use the project's own tools when present, and fall back to search:
 | TypeScript / JavaScript | `knip`, `ts-prune`, `tsc --noUnusedLocals`, ESLint `no-unused-vars` |
 | Python | `vulture`, `ruff` (F401, F841) |
 | Go | `deadcode`, `staticcheck` (U1000) |
-| Rust | compiler `dead_code` warnings, `cargo udeps` for deps |
+| Rust | compiler `dead_code` warnings |
 | Anything else | symbol search across the repo, including non-code files (configs, templates, YAML) |
 
 Tool output is a list of candidates, never a verdict. Each candidate is confirmed by a
@@ -129,8 +135,9 @@ must not remove:
 - a route file found by framework convention
 - a symbol referenced only from a YAML config
 
-plus real dead code it must remove. The expected `cleanup-report.md` for each fixture
-lives next to it, like `tests/readiness-check/expected/`.
+plus real dead code it must remove. Fixtures go in `tests/dead-code-sweep/fixtures/<name>/`
+and each one's expected report in `tests/dead-code-sweep/expected/<name>/`, the same
+layout as `tests/readiness-check/`.
 
 ## Skills 2 to 5: notes
 
@@ -139,8 +146,8 @@ lives next to it, like `tests/readiness-check/expected/`.
   It rewrites text only, and flags any case where it can't tell whether the code or the
   doc is wrong.
 - **`unused-deps-prune`**: reads the manifest, searches for imports, and checks config
-  files, scripts and plugin lists before removing anything. It runs install and build
-  after.
+  files, scripts and plugin lists before removing anything (for Rust, `cargo udeps`). It
+  runs install and build after.
 - **`duplicate-merge`**: needs a similarity pass (same name stem, same body shape, or a
   tool such as `jscpd`). It only merges when the behaviours are the same, which the tests
   must prove. Otherwise it reports the pair.
@@ -160,9 +167,6 @@ ships:
 
 ## Open questions
 
-- Do the cleanup skills share a report file name (`cleanup-report.md` with a section per
-  skill) or use one per skill (`dead-code-report.md`)? One per skill avoids overwrites
-  when two run close together.
 - Should report-only mode be the default for the first run in a repository, with apply
   mode opt-in?
 - Where does `stale-flag-cleanup` get flag state in a provider-neutral way?
